@@ -65,7 +65,7 @@ public class TaskErrorHandler implements iEventListener {
             String timestamp = timeOnlyFormatter.format(new Date());
             String taskClassname = errorEvent.getTaskProxy().getTaskClass().getName();
             StringBuilder sb = new StringBuilder("[").append(timestamp).append("]")
-                    .append(" SCHEDULED TASK ERROR {").append(JavaUtils.removePackageInfo(taskClassname))
+                    .append(" SCHEDULED TASK ERROR {").append(taskClassname)
                     .append(" - task #").append(TaskUtils.getTaskId()).append("}");
             if (this.appName != null) sb.append(" FOR APP: ").append(appName);
             if (this.platformName != null) {
