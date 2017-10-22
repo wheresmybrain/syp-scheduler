@@ -8,7 +8,7 @@ import com.wheresmybrain.syp.scheduler.TaskEvent;
  * are used by the framework to track task progress.
  *
  * @see TaskInternalState
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public class TaskLifecycleEvent extends TaskEvent {
 

@@ -24,7 +24,7 @@ import java.util.Map;
  * specifically for {@link TaskErrorEvent} events, which are the same events that this
  * TaskErrorHandler listens for.
  *
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public class TaskErrorHandler implements iEventListener {
 

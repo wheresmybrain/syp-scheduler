@@ -50,7 +50,7 @@ import java.util.Date;
  * </li>
  * </ol>
  *
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public abstract class TaskEvent {
 

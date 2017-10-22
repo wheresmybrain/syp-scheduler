@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Useful utility methods related to dates and times.
  *
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public class TimeUtils {
 

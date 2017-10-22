@@ -24,7 +24,7 @@ import com.wheresmybrain.syp.scheduler.TaskEvent;
  *   the {@link TaskScheduler#addEventListener(iEventListener)} method</li>
  *
  * @see TaskEvent
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public interface iEventListener {
 

@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * create tasks by implementing <code>iTask</code> and scheduling the task through <code>TaskScheduler</code>.
  *
  * @see TaskScheduler
- * @author Chris McFarland
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public abstract class ScheduledTask implements Runnable, Delayed {
 

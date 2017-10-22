@@ -19,7 +19,7 @@ import com.wheresmybrain.syp.scheduler.events.iEventListener;
  * See {@link TaskEvent} for more information on creating events and listeners to
  * externalize data.
  *
- * @author Chris McFarland
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public interface iTask {
 

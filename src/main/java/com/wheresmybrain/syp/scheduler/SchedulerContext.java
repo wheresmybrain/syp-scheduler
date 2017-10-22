@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * on TaskScheduler using the {@link TaskScheduler#setSchedulerContext(SchedulerContext)} method
  * before starting the Scheduler.
  *
- * @author Chris McFarland
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public class SchedulerContext {
 

@@ -10,7 +10,7 @@ import com.wheresmybrain.syp.scheduler.events.iEventListener;
  *
  * @see TaskErrorHandler
  * @see TaskEvent
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public class TaskErrorEvent extends TaskEvent {
 

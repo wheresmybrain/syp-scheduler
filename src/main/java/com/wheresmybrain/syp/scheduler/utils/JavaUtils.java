@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Assorted Java-specific utility methods.
  *
- * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
+ * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public class JavaUtils {
 
