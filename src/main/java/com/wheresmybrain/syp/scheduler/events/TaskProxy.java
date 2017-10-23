@@ -1,6 +1,9 @@
 package com.wheresmybrain.syp.scheduler.events;
 
+import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskEvent;
+import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
+import com.wheresmybrain.syp.scheduler.iTask;
 
 /**
  * The TaskProxy is passed inside a {@link TaskEvent}, and can be used by

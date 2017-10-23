@@ -1,8 +1,11 @@
 package com.wheresmybrain.syp.scheduler;
 
+import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
 import com.wheresmybrain.syp.scheduler.events.TaskLifecycleEvent;
 import com.wheresmybrain.syp.scheduler.events.TaskProxy;
 import com.wheresmybrain.syp.scheduler.events.errorhandler.TaskErrorEvent;
+import com.wheresmybrain.syp.scheduler.tasks.RecurringTask;
+import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
