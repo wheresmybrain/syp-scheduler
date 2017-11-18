@@ -9,7 +9,7 @@
         <commonsDigesterVersion>2.1</commonsDigesterVersion>
     </properties>
 
-    <groupId>com.wheresmybrain.syp.scheduler</groupId>
+    <groupId>com.wheresmybrain.syp</groupId>
     <artifactId>syp-scheduler</artifactId>
     <version>1.0-SNAPSHOT</version>
 
