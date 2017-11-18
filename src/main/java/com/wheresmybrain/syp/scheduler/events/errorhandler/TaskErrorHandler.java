@@ -1,10 +1,12 @@
 package com.wheresmybrain.syp.scheduler.events.errorhandler;
 
 import com.wheresmybrain.syp.scheduler.TaskEvent;
+import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.TaskUtils;
 import com.wheresmybrain.syp.scheduler.events.iEventListener;
 import com.wheresmybrain.syp.scheduler.utils.JavaUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
@@ -17,7 +19,7 @@ import java.util.Map;
 /**
  * This error handler logs task errors as warning messages. It will also
  * send email error notifications if you injected an "error emailer" using the
- * {@link TaskScheduler#injectErrorEmailer(iErrorEmailer, String...)} method.
+ * {@link TaskScheduler#injectErrorEmailer(iErrorEmailer, String, String, String...)} method.
  * <p/>
  * If you need additional behavior when tasks fail, then create a custom event listener,
  * as described in the {@link iEventListener} javadoc, and implement it to listen
@@ -28,7 +30,7 @@ import java.util.Map;
  */
 public class TaskErrorHandler implements iEventListener {
 
-    private static Log log = LogFactory.getLog(TaskErrorHandler.class);
+    private static Logger log = LoggerFactory.getLogger(TaskErrorHandler.class);
     private static final SimpleDateFormat timeOnlyFormatter = new SimpleDateFormat("HH:mm");
 
     private static final String EOL = System.getProperty("line.separator");

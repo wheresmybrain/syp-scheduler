@@ -1,9 +1,10 @@
 package com.wheresmybrain.syp.scheduler;
 
 import com.wheresmybrain.syp.scheduler.events.TaskProxy;
+import com.wheresmybrain.syp.scheduler.events.errorhandler.TaskErrorEvent;
 import com.wheresmybrain.syp.scheduler.events.iEventListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +22,7 @@ public final class TaskUtils {
 
     //-- static
 
-    private static final Log log = LogFactory.getLog(TaskUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(TaskUtils.class);
 
     // thread-local var associates a task w/ its Thread
     private static InheritableThreadLocal<ScheduledTask> taskForThread = new InheritableThreadLocal<>();

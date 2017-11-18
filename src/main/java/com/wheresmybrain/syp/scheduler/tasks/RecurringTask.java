@@ -4,8 +4,8 @@ import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
 import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class RecurringTask extends ScheduledTask {
 
-    private static Log log = LogFactory.getLog(RecurringTask.class);
+    private static Logger log = LoggerFactory.getLogger(RecurringTask.class);
 
     /**
      * Executes this task then schedules the next occurrence.

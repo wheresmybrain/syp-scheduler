@@ -2,6 +2,9 @@ package com.wheresmybrain.syp.scheduler.config;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.enums.DayOccurrence;
+import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
+import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
 import com.wheresmybrain.syp.scheduler.iTask;
 
 import java.util.Arrays;

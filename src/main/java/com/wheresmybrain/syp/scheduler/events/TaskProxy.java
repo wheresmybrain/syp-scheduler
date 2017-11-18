@@ -4,6 +4,7 @@ import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskEvent;
 import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
 import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.mixins.AbstractMixin;
 
 /**
  * The TaskProxy is passed inside a {@link TaskEvent}, and can be used by
@@ -52,7 +53,7 @@ public class TaskProxy {
     }
 
     /**
-     * Returns the {@link InternalState} of the task that fired the event.
+     * Returns the {@link TaskInternalState} of the task that fired the event.
      */
     public TaskInternalState getInternalState() {
         return this.task.getInternalState();

@@ -7,8 +7,8 @@ import com.wheresmybrain.syp.scheduler.events.errorhandler.TaskErrorEvent;
 import com.wheresmybrain.syp.scheduler.tasks.RecurringTask;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.concurrent.Delayed;
@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class ScheduledTask implements Runnable, Delayed {
 
-    private static Log log = LogFactory.getLog(ScheduledTask.class);
+    private static Logger log = LoggerFactory.getLogger(ScheduledTask.class);
 
     // holds an internal reference to scheduler so tasks
     // can schedule subsequent executions

@@ -1,19 +1,37 @@
 package com.wheresmybrain.syp.scheduler;
 
+import com.wheresmybrain.syp.scheduler.config.SchedulerConfig;
+import com.wheresmybrain.syp.scheduler.config.SchedulerConfigException;
+import com.wheresmybrain.syp.scheduler.config.TaskConfig;
+import com.wheresmybrain.syp.scheduler.enums.DayOccurrence;
+import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
+import com.wheresmybrain.syp.scheduler.enums.IntervalType;
+import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
+import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
 import com.wheresmybrain.syp.scheduler.events.TaskLifecycleEvent;
 import com.wheresmybrain.syp.scheduler.events.TaskProxy;
 import com.wheresmybrain.syp.scheduler.events.errorhandler.TaskErrorHandler;
 import com.wheresmybrain.syp.scheduler.events.errorhandler.iErrorEmailer;
 import com.wheresmybrain.syp.scheduler.events.iEventListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.wheresmybrain.syp.scheduler.mixins.DailyScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.HourIntervalScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.MillisecondIntervalScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.MinuteIntervalScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.MonthUtils;
+import com.wheresmybrain.syp.scheduler.mixins.MonthlyScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.OneTimeTaskMixin;
+import com.wheresmybrain.syp.scheduler.mixins.SecondIntervalScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.WeeklyScheduleMixin;
+import com.wheresmybrain.syp.scheduler.mixins.YearlyScheduleMixin;
+import com.wheresmybrain.syp.scheduler.tasks.RecurringTask;
+import com.wheresmybrain.syp.scheduler.utils.JavaUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,7 +90,7 @@ public class TaskScheduler implements iEventListener {
 
     //-- static
 
-    private static Log log = LogFactory.getLog(TaskScheduler.class);
+    private static Logger log = LoggerFactory.getLogger(TaskScheduler.class);
 
     /**
      * Use this constant for scheduling a monthly or yearly task to schedule a day relative to
@@ -452,12 +470,12 @@ public class TaskScheduler implements iEventListener {
      * implementing the {@link iTask} interface, then call this method to execute that task
      * every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType, String...)
-     * schedule interval} method, this method does not have a mechanism for executing
+     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleDailyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long, String...).
+     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -489,12 +507,12 @@ public class TaskScheduler implements iEventListener {
      * the {@link iTask} interface, then call this method to execute that task every week.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType, String...)
-     * schedule interval} method, this method does not have a mechanism for executing
+     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleWeeklyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long, String...).
+     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -531,12 +549,12 @@ public class TaskScheduler implements iEventListener {
      * the {@link iTask} interface, then call this method to execute that task every month.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType, String...)
-     * schedule interval} method, this method does not have a mechanism for executing
+     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleMonthlyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long, String...).
+     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -578,12 +596,12 @@ public class TaskScheduler implements iEventListener {
      * implementing the {@link iTask} interface, then call this method to execute that
      * task every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType, String...)
-     * schedule interval} method, this method does not have a mechanism for executing
+     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleMonthlyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long, String...).
+     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -625,12 +643,12 @@ public class TaskScheduler implements iEventListener {
      * the {@link iTask} interface, then call this method to execute that task every year.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType, String...)
-     * schedule interval} method, this method does not have a mechanism for executing
+     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleYearlyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long, String...).
+     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with

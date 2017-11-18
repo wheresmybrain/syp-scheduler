@@ -1,6 +1,7 @@
 package com.wheresmybrain.syp.scheduler.events;
 
 import com.wheresmybrain.syp.scheduler.TaskEvent;
+import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
 
 /**
  * This informational event is fired automatically by all

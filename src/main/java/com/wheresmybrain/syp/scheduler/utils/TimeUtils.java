@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimeUtils {
 
-    private static Log log = LogFactory.getLog(TimeUtils.class);
+    private static Logger log = LoggerFactory.getLogger(TimeUtils.class);
 
     private static final SimpleDateFormat timeOnlyFormatter = new SimpleDateFormat("h:mm a");
 
