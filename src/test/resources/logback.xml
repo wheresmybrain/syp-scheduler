@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="60 seconds">
+
+    <contextName>BootstrapTest</contextName>
+
+    <!-- The encoder uses a default class that can be changed using the class attribute -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%contextName %d{HH:mm:ss} [%t] %-5level %class{0}.%M - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger's appenders are inherited by other loggers by default -->
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- package-level configs (ERROR, WARN, INFO, DEBUG) -->
+    <logger name="com.wheresmybrain.syp.scheduler" level="INFO"/>
+    <logger name="com.wheresmybrain.syp.scheduler.testevents" level="DEBUG"/>
+
+</configuration>

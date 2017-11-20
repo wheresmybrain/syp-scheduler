@@ -8,11 +8,11 @@ import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
 import com.wheresmybrain.syp.scheduler.enums.IntervalType;
 import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
 import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
+import com.wheresmybrain.syp.scheduler.events.EventListener;
 import com.wheresmybrain.syp.scheduler.events.TaskLifecycleEvent;
 import com.wheresmybrain.syp.scheduler.events.TaskProxy;
+import com.wheresmybrain.syp.scheduler.events.errorhandler.ErrorReporter;
 import com.wheresmybrain.syp.scheduler.events.errorhandler.TaskErrorHandler;
-import com.wheresmybrain.syp.scheduler.events.errorhandler.iErrorEmailer;
-import com.wheresmybrain.syp.scheduler.events.iEventListener;
 import com.wheresmybrain.syp.scheduler.mixins.DailyScheduleMixin;
 import com.wheresmybrain.syp.scheduler.mixins.HourIntervalScheduleMixin;
 import com.wheresmybrain.syp.scheduler.mixins.MillisecondIntervalScheduleMixin;
@@ -48,14 +48,14 @@ import java.util.concurrent.Future;
  * to execute tasks on a recurring schedule:
  * <ol>
  * <li>
- *   Create one or more Tasks that implement {@link iTask}.
+ *   Create one or more Tasks that implement {@link Task}.
  * </li>
  * <li>
  *   Use one of the constructors to get an instance of TaskScheduler.
  * </li>
  * <li>
  *   Optionally inject an "error emailer" (if you want to receive error notifications via
- *   email) with the following method: {@link #injectErrorEmailer(iErrorEmailer, String, String, String...)}.
+ *   email) with the following method: {@link #injectErrorReporter(ErrorReporter, String, String, String...)}.
  * </li>
  * <li>
  *   Start the TaskScheduler with its <code>start()</code> method (there's a stop() method too
@@ -69,7 +69,7 @@ import java.util.concurrent.Future;
  * </ol>
  * The tasks will automatically execute on their corresponding schedules. If any task encounters
  * an error, it will log the details. If you inject an "error emailer" (via {@link
- * #injectErrorEmailer(iErrorEmailer, String, String, String...)}), an error notification will
+ * #injectErrorReporter(ErrorReporter, String, String, String...)}), an error notification will
  * be emailed to the support address(es) designated in the inject method. Also you can add
  * task-specific email addresses to notify with this method:
  * {@link #setTaskSpecificAddresses(int, String...)}. For tasks with frequent intervals
@@ -86,7 +86,7 @@ import java.util.concurrent.Future;
  *
  * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
-public class TaskScheduler implements iEventListener {
+public class TaskScheduler implements EventListener {
 
     //-- static
 
@@ -158,16 +158,16 @@ public class TaskScheduler implements iEventListener {
      * This method injects a class that can be used to send error notifications via email.
      * This method *must* be called before the scheduler is started.
      * Use this method if you want to receive email notifications when tasks fail. See
-     * {@link iErrorEmailer} for instructions for implementing the class to inject. If
-     * no "error emailer" is injected, then the errors will only be logged by the
+     * {@link ErrorReporter} for instructions for implementing the class to inject. If
+     * no "error reporter" is injected, then the errors will still be logged by the
      * internal {@link TaskErrorHandler}.
      *
-     * @param errorEmailer implementation of the iErrorEmailer interface
+     * @param errorReporter implementation of the ErrorReporter interface
      * @param appName Sets the name of the application running this scheduler. Setting this
      *   attribute is optional, but troubleshooting errors will be much easier if this is
      *   set, especially if errors from different applications are emailed.
-     * @param platformName Sets the name of the platform or server that the application is
-     *   running on. Setting this attribute is optional, but troubleshooting errors will be
+     * @param environmentName Sets the name of the environment or server that the application is
+     *   running in. Setting this attribute is optional, but troubleshooting errors will be
      *   much easier if this is set, especially if errors from different servers are emailed.
      * @param supportAddresses the set of global support email addresses to receive
      *   notification of errors for every task. Alternatively, or in addition to, addresses
@@ -177,10 +177,10 @@ public class TaskScheduler implements iEventListener {
      *   follow the correct format.
      * @throws IllegalStateException if this method is called after the scheduler is started.
      */
-    public void injectErrorEmailer(
-            iErrorEmailer errorEmailer,
+    public void injectErrorReporter(
+            ErrorReporter errorReporter,
             String appName,
-            String platformName,
+            String environmentName,
             String... supportAddresses)
     {
         if (this.isRunning()) {
@@ -188,10 +188,10 @@ public class TaskScheduler implements iEventListener {
             throw new IllegalStateException(msg);
         }
         // add to error handler
-        this.errorHandler.setErrorEmailer(errorEmailer, supportAddresses);
+        this.errorHandler.setErrorEmailer(errorReporter, supportAddresses);
         this.errorHandler.setAppName(appName);
-        this.errorHandler.setPlatformName(platformName);
-        this.errorHandler.setErrorEmailer(errorEmailer, supportAddresses);
+        this.errorHandler.setEnvironmentName(environmentName);
+        this.errorHandler.setErrorEmailer(errorReporter, supportAddresses);
     }
 
     /**
@@ -215,7 +215,7 @@ public class TaskScheduler implements iEventListener {
 
     /**
      * Registers an event Listener with the Scheduler. An event listeners can either be
-     * added before or after starting the Scheduler. Implement the {@link iEventListener}
+     * added before or after starting the Scheduler. Implement the {@link EventListener}
      * interface to create an event listener to handle task events.
      * <p/>
      * Any application using the SyP Scheduler component can create and register a listener to
@@ -224,11 +224,11 @@ public class TaskScheduler implements iEventListener {
      * fire the events, which are caught and handled by the application's own event listener
      * (registered with this method).
      *
-     * @param eventListener class implementing {@link iEventListener} to handle one
+     * @param eventListener class implementing {@link EventListener} to handle one
      *   or more types of events fired from the tasks.
-     * @see iEventListener
+     * @see EventListener
      */
-    public void addEventListener(iEventListener eventListener) {
+    public void addEventListener(EventListener eventListener) {
         TaskUtils.addEventListener(eventListener);
     }
 
@@ -271,18 +271,18 @@ public class TaskScheduler implements iEventListener {
      * process the file in the background.
      * <p/>
      * To use this task the developer will need to create a <i>task</i> class by
-     * implementing the {@link iTask} interface, then call this method to
+     * implementing the {@link Task} interface, then call this method to
      * execute the task after the specified delay.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param delayInMillis the delay (in milliseconds) before the task executes. If the
      *   delayInMillis<=0, then the task executes immediately when it is initialized, or
      *   when the TaskScheduler first starts, whichever comes last.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      */
-    public final int scheduleOneTimeExecution(iTask task, long delayInMillis) {
+    public final int scheduleOneTimeExecution(Task task, long delayInMillis) {
 
         if (delayInMillis < 0) delayInMillis = 0; //convert negative delay to immediate execution
 
@@ -298,11 +298,11 @@ public class TaskScheduler implements iEventListener {
      * If the specified time is in the past, then the task will execute immediately.
      * <p/>
      * To use this task the developer will need to create a <i>task</i> class by
-     * implementing the {@link iTask} interface, then call this method to
+     * implementing the {@link Task} interface, then call this method to
      * execute the task after the specified delay.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param year required param specifies the year to execute as a 4-digit number.
      * @param monthOfYear enum constant representing one of the months in the year
      * @param dayOfMonth set to execute on day 1-31 (29-31 will execute on last day of month
@@ -317,7 +317,7 @@ public class TaskScheduler implements iEventListener {
      *   the task ahead of time.
      */
     public final int scheduleOneTimeExecution(
-            iTask task,
+            Task task,
             final int year,
             final MonthOfYear monthOfYear,
             final int dayOfMonth,
@@ -409,7 +409,7 @@ public class TaskScheduler implements iEventListener {
      * this sequence: run for 5 minutes - wait 10 minutes - run for 5 minutes - wait 10 minutes - ...
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by
-     * implementing the {@link iTask} interface, then call this method to
+     * implementing the {@link Task} interface, then call this method to
      * execute the task on the specified interval. Any Task can be scheduled multiple
      * times with any interval.
      * <p/>
@@ -418,7 +418,7 @@ public class TaskScheduler implements iEventListener {
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
      *   when it is initialized, or when the TaskScheduler first starts, whichever
@@ -435,7 +435,7 @@ public class TaskScheduler implements iEventListener {
      * @throws IllegalArgumentException if an invalid intervalType is specified.
      */
     public final int scheduleIntervalExecution(
-            iTask task,
+            Task task,
             long initialDelayInMillis,
             int interval,
             IntervalType intervalType) {
@@ -467,29 +467,29 @@ public class TaskScheduler implements iEventListener {
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by
-     * implementing the {@link iTask} interface, then call this method to execute that task
+     * implementing the {@link Task} interface, then call this method to execute that task
      * every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
      * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleDailyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
+     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param hourOfDay hour (0-23) to execute each day
      * @param minuteOfHour minute (0-59) to execute each hour
      * @param secondOfMinute minute (0-59) to execute each minute
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      */
-    public final int scheduleDailyExecution(iTask task, int hourOfDay, int minuteOfHour, int secondOfMinute) {
+    public final int scheduleDailyExecution(Task task, int hourOfDay, int minuteOfHour, int secondOfMinute) {
 
         // make the task schedule-able w/ one of the mixins
         RecurringTask dailyTask = new DailyScheduleMixin(task, hourOfDay, minuteOfHour, secondOfMinute);
@@ -504,22 +504,22 @@ public class TaskScheduler implements iEventListener {
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by implementing
-     * the {@link iTask} interface, then call this method to execute that task every week.
+     * the {@link Task} interface, then call this method to execute that task every week.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
      * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleWeeklyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
+     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param dayOfWeek enum constant for day-of-week
      * @param hourOfDay hour (0-23) to execute each day
      * @param minuteOfHour minute (0-59) to execute each hour
@@ -528,7 +528,7 @@ public class TaskScheduler implements iEventListener {
      * @see DayOfWeek
      */
     public final int scheduleWeeklyExecution(
-            iTask task,
+            Task task,
             DayOfWeek dayOfWeek,
             int hourOfDay,
             int minuteOfHour)
@@ -546,22 +546,22 @@ public class TaskScheduler implements iEventListener {
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by implementing
-     * the {@link iTask} interface, then call this method to execute that task every month.
+     * the {@link Task} interface, then call this method to execute that task every month.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
      * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleMonthlyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
+     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param dayOfMonth set to execute on day 1-31 (29-31 will execute on last day of month
      *   for months with less than those number of days), or set to constant LAST_DAY_OF_MONTH
      *   with (optionally) a day offset. Examples: dayOfMonth=16 (executes on 16th of every
@@ -574,7 +574,7 @@ public class TaskScheduler implements iEventListener {
      *   the task at any time.
      */
     public final int scheduleMonthlyExecution(
-            iTask task,
+            Task task,
             int dayOfMonth,
             int hourOfDay,
             int minuteOfHour)
@@ -593,22 +593,22 @@ public class TaskScheduler implements iEventListener {
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by
-     * implementing the {@link iTask} interface, then call this method to execute that
+     * implementing the {@link Task} interface, then call this method to execute that
      * task every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
      * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleMonthlyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
+     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param dayOfWeek enum constant for day-of-week to schedule as an occurrence in the month
      * @param dayOccurrence enum constant representing the occurrence w/in the month of the 'dayOfWeek'.
      *   For instance, setting dayOccurrence=DayOccurrence.LAST and dayOfWeek=SUNDAY will
@@ -621,7 +621,7 @@ public class TaskScheduler implements iEventListener {
      * @see DayOccurrence
      */
     public final int scheduleMonthlyExecution(
-            iTask task,
+            Task task,
             DayOfWeek dayOfWeek,
             DayOccurrence dayOccurrence,
             int hourOfDay,
@@ -640,22 +640,22 @@ public class TaskScheduler implements iEventListener {
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by implementing
-     * the {@link iTask} interface, then call this method to execute that task every year.
+     * the {@link Task} interface, then call this method to execute that task every year.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(iTask, long, int, IntervalType) schedule interval}
+     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
      * method, this method does not have a mechanism for executing
      * the task immediately (or with a short delay). The purpose of <code>scheduleYearlyExecution</code>
      * is to execute at a scheduled time. If you need to perform an initial execution before
      * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(iTask, long)}.
+     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
-     *   that implements iTask, and the same task object can be scheduled multiple times.
+     *   that implements Task, and the same task object can be scheduled multiple times.
      * @param monthOfYear enum constant representing one of the months in the year
      * @param dayOfMonth set to execute on day 1-31 (29-31 will execute on last day of month
      *   for months with less than those number of days), or set to constant TaskScheduler.LAST_DAY_OF_MONTH
@@ -669,7 +669,7 @@ public class TaskScheduler implements iEventListener {
      *   the task at any time.
      */
     public final int scheduleYearlyExecution(
-            iTask task,
+            Task task,
             MonthOfYear monthOfYear,
             int dayOfMonth,
             int hourOfDay,
@@ -684,13 +684,13 @@ public class TaskScheduler implements iEventListener {
 
     /**
      * This is a general purpose method that schedules any subclass of {@link ScheduledTask},
-     * especially including custom written task classes (when implementing iTask doesn't suffice).
+     * especially including custom written task classes (when implementing Task doesn't suffice).
      * It is generally recommended to use one of the other <i>schedule</i> methods in this class
-     * for scheduling {@link iTask} tasks that do not extend ScheduledTask.
+     * for scheduling {@link Task} tasks that do not extend ScheduledTask.
      * <p/>
      * To use this method, the developer will need to extend either ScheduledTask, for a one-time
      * execution task, or {@link RecurringTask} for tasks that execute on a recurring schedule.
-     * But it is much easier for the developer to just implement {@link iTask} and schedule it
+     * But it is much easier for the developer to just implement {@link Task} and schedule it
      * using the other <code>schedule...</code> methods in this class.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
@@ -802,19 +802,19 @@ public class TaskScheduler implements iEventListener {
             log.debug("scheduling custom task: "+classname+" with delay: "+delay+" ms");
             taskId = this.scheduleTask(task, delay);
         } else {
-            // all non-custom tasks implement iTask
+            // all non-custom tasks implement Task
             // if <task> is declared in scheduler-config.xml, then the task
             // is already instantiated and saved inside the taskConfig
-            iTask task = taskConfig.getTask();
+            Task task = taskConfig.getTask();
             if (task == null) {
                 // otherwise, create the task here using its classname
                 String classname = null;
                 try {
                     classname = taskConfig.getClassName();
                     Class<?> taskClass = classLoader.loadClass(classname);
-                    task = (iTask) taskClass.newInstance();
+                    task = (Task) taskClass.newInstance();
                 } catch (Exception ex) {
-                    String msg = "error instantiating iTask task: "+classname;
+                    String msg = "error instantiating Task task: "+classname;
                     throw new SchedulerConfigException(msg, ex);
                 }
             }
@@ -1045,7 +1045,7 @@ public class TaskScheduler implements iEventListener {
     }
 
     /**
-     * Implements {@link iEventListener} to listen for task lifecycle events.
+     * Implements {@link EventListener} to listen for task lifecycle events.
      * <p/>
      * This method does not need to be synchronized because all the structures
      * are Thread-safe.
@@ -1101,7 +1101,7 @@ public class TaskScheduler implements iEventListener {
         // (delayed because custom handler can be added during setup)
         TaskUtils.addEventListener(this.errorHandler);
         // start the processing thread
-        log.info("Starting TaskScheduler");
+        log.info("Starting Scheduler");
         this.taskProcessor.start();
         return this;
     }
@@ -1111,7 +1111,7 @@ public class TaskScheduler implements iEventListener {
      * will be cancelled when this method is called.
      */
     public void stop() {
-        log.info("Stopping TaskScheduler");
+        log.info("Stopping Scheduler");
         this.taskProcessor.interrupt();
     }
 
@@ -1119,7 +1119,7 @@ public class TaskScheduler implements iEventListener {
      * Returns task report
      */
     public String getState() {
-        StringBuilder sb = new StringBuilder("TaskScheduler state: {");
+        StringBuilder sb = new StringBuilder("Scheduler state: {");
         int count = 0;
         synchronized (this.taskMap) {
             for (Integer id : taskMap.keySet()) {

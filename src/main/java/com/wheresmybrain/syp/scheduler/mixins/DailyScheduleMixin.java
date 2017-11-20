@@ -2,7 +2,7 @@ package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
 import com.wheresmybrain.syp.scheduler.utils.TruncatedDate;
 
@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This mixin-style class lets any <code>iTask</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
  * on a daily schedule at a specified time.
  * <p/>
  * This is a daily execution task, which means it should execute once per day, so if it
@@ -40,7 +40,7 @@ public class DailyScheduleMixin extends AbstractMixin {
      * @param secondOfMinute second (0-59) to execute in the specified secondOfMinute
      * @throws IllegalArgumentException if any invalid values are passed
      */
-    public DailyScheduleMixin(iTask task, int hourOfDay, int minuteOfHour, int secondOfMinute) {
+    public DailyScheduleMixin(Task task, int hourOfDay, int minuteOfHour, int secondOfMinute) {
         super(task);
         if (hourOfDay < 0 || hourOfDay > 23 || minuteOfHour < 0 || minuteOfHour > 59 || secondOfMinute < 0 || secondOfMinute > 59) {
             throw new IllegalArgumentException("'hourOfDay' must be specified 0-23 and 'minuteOfHour' 0-59 and 'secondOfMinute' 0-59");

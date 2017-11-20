@@ -3,7 +3,7 @@ package com.wheresmybrain.syp.scheduler.events.errorhandler;
 import com.wheresmybrain.syp.scheduler.TaskEvent;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
 import com.wheresmybrain.syp.scheduler.TaskUtils;
-import com.wheresmybrain.syp.scheduler.events.iEventListener;
+import com.wheresmybrain.syp.scheduler.events.EventListener;
 import com.wheresmybrain.syp.scheduler.utils.JavaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +19,16 @@ import java.util.Map;
 /**
  * This error handler logs task errors as warning messages. It will also
  * send email error notifications if you injected an "error emailer" using the
- * {@link TaskScheduler#injectErrorEmailer(iErrorEmailer, String, String, String...)} method.
+ * {@link TaskScheduler#injectErrorReporter(ErrorReporter, String, String, String...)} method.
  * <p/>
  * If you need additional behavior when tasks fail, then create a custom event listener,
- * as described in the {@link iEventListener} javadoc, and implement it to listen
+ * as described in the {@link EventListener} javadoc, and implement it to listen
  * specifically for {@link TaskErrorEvent} events, which are the same events that this
  * TaskErrorHandler listens for.
  *
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
-public class TaskErrorHandler implements iEventListener {
+public class TaskErrorHandler implements EventListener {
 
     private static Logger log = LoggerFactory.getLogger(TaskErrorHandler.class);
     private static final SimpleDateFormat timeOnlyFormatter = new SimpleDateFormat("HH:mm");
@@ -36,14 +36,14 @@ public class TaskErrorHandler implements iEventListener {
     private static final String EOL = System.getProperty("line.separator");
 
     private String appName;
-    private String platformName;
-    private iErrorEmailer errorEmailer;
+    private String environmentName;
+    private ErrorReporter errorEmailer;
     private EmailThrottle emailThrottler = new EmailThrottle();
     private String[] defaultSupportAddresses = new String[0];
 
     /**
-     * Implements <i>iEventListener</i> method to handle error events.
-     * @see iEventListener#handleEvent(TaskEvent)
+     * Implements <i>EventListener</i> method to handle error events.
+     * @see EventListener#handleEvent(TaskEvent)
      */
     public final void handleEvent(TaskEvent event) {
         if (event instanceof TaskErrorEvent) {
@@ -70,8 +70,8 @@ public class TaskErrorHandler implements iEventListener {
                     .append(" SCHEDULED TASK ERROR {").append(taskClassname)
                     .append(" - task #").append(TaskUtils.getTaskId()).append("}");
             if (this.appName != null) sb.append(" FOR APP: ").append(appName);
-            if (this.platformName != null) {
-                sb.append(" (").append(platformName).append("-").append(errorEvent.getTaskThreadName()).append(")");
+            if (this.environmentName != null) {
+                sb.append(" (").append(environmentName).append("-").append(errorEvent.getTaskThreadName()).append(")");
             }
             String subject = sb.toString();
             // email error notification
@@ -82,7 +82,7 @@ public class TaskErrorHandler implements iEventListener {
     /**
      * Extracts the information from the errorEvent, then formats and
      * returns it as a multi-line String suitable for logging or inclusion
-     * in an email. The info included are appName and platformName (if set
+     * in an email. The info included are appName and environmentName (if set
      * on this handler during initialization), information on the task
      * that errored, debug details (if set on the event), and stacktrace
      * (if exception set on the event).
@@ -95,7 +95,7 @@ public class TaskErrorHandler implements iEventListener {
         // log task error as a warning
         StringBuilder sb = new StringBuilder("TASK ERROR");
         if (this.appName !=  null) sb.append(" FOR APP: ").append(this.appName);
-        if (this.platformName != null) sb.append(" (").append(platformName).append(")");
+        if (this.environmentName != null) sb.append(" (").append(environmentName).append(")");
         sb.append(EOL).append(taskInfo);
         if (debugInfo != null && debugInfo.length > 0) {
             sb.append(EOL).append("DEBUG INFO:");
@@ -117,12 +117,12 @@ public class TaskErrorHandler implements iEventListener {
      * Sets a class that can be used to send error notifications via email. If
      * no "error emailer" is injected, then the errors will only be logged.
      *
-     * @param errorEmailer implementation of the iErrorEmailer interface
+     * @param errorEmailer implementation of the ErrorReporter interface
      * @param supportAddresses the set of global support email addresses to receive
      *   notification of errors for every task. Additional addresses might be added
      *   on a task-by-task basis.
      */
-    public void setErrorEmailer(iErrorEmailer errorEmailer, String... supportAddresses) {
+    public void setErrorEmailer(ErrorReporter errorEmailer, String... supportAddresses) {
         this.errorEmailer = errorEmailer;
         if (supportAddresses != null) {
             this.defaultSupportAddresses = supportAddresses;
@@ -134,7 +134,7 @@ public class TaskErrorHandler implements iEventListener {
      * @return the error emailer set on this handler, or null if
      * no emailer was set.
      */
-    protected final iErrorEmailer getErrorEmailer() {
+    protected final ErrorReporter getErrorEmailer() {
         return this.errorEmailer;
     }
 
@@ -156,20 +156,20 @@ public class TaskErrorHandler implements iEventListener {
     }
 
     /**
-     * Sets the name of the platform or server that the application is running on.
+     * Sets the name of the environment or server that the application is running on.
      * Setting this attribute is optional, but troubleshooting errors will be much
      * easier if this is set.
      */
-    public void setPlatformName(String platformName) {
-        this.platformName = platformName;
+    public void setEnvironmentName(String environmentName) {
+        this.environmentName = environmentName;
     }
 
     /**
-     * Returns the name of the platform or server that the application is
-     * running on, or null if no platformName was set.
+     * Returns the name of the environment or server that the application is
+     * running on, or null if no environmentName was set.
      */
-    protected String getPlatformName() {
-        return this.platformName;
+    protected String getEnvironmentName() {
+        return this.environmentName;
     }
 
     /*

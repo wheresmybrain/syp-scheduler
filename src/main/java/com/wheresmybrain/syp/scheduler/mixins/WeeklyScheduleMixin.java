@@ -3,7 +3,7 @@ package com.wheresmybrain.syp.scheduler.mixins;
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
 import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
 import com.wheresmybrain.syp.scheduler.utils.TruncatedDate;
 
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This mixin-style class lets any <code>iTask</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
  * on a weekly schedule on a specified dayOfWeek and time.
  * <p/>
  * This is a weekly execution task, which means it should execute once per week, so if it
@@ -41,7 +41,7 @@ public class WeeklyScheduleMixin extends AbstractMixin {
      * @param minuteOfHour minute (0-59) to execute in the specified hourOfDay
      * @throws IllegalArgumentException if any invalid values are passed
      */
-    public WeeklyScheduleMixin(iTask task, DayOfWeek dayOfWeek, int hourOfDay, int minuteOfHour) {
+    public WeeklyScheduleMixin(Task task, DayOfWeek dayOfWeek, int hourOfDay, int minuteOfHour) {
         super(task);
         if (dayOfWeek == null) {
             throw new IllegalArgumentException("'dayOfWeek' (null) must be specified");

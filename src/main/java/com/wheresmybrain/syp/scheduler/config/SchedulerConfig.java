@@ -131,7 +131,7 @@ public class SchedulerConfig {
         d.addSetProperties(pattern); //attribute names match property names
         d.addSetNext(pattern, "addTaskConfig" );
 
-        // iTask objects are instantiated if they have custom attributes to set
+        // Task objects are instantiated if they have custom attributes to set
         pattern = "scheduler/task-config/custom-attributes";
         d.addFactoryCreate(pattern, new TaskObjectFactory(pattern, d));
         d.addSetProperties(pattern);
@@ -195,7 +195,7 @@ public class SchedulerConfig {
     }
 
     /*
-     * Creates iTask objects using classname (from Digester stack) and app's ClassLoader.
+     * Creates Task objects using classname (from Digester stack) and app's ClassLoader.
      */
     private class TaskObjectFactory extends AbstractObjectCreationFactory {
 

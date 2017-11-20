@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE scheduler [
+        <!ELEMENT scheduler (task-config+)>
+        <!ATTLIST scheduler emails CDATA #IMPLIED >
+        <!ELEMENT task-config (custom-attributes*)>
+        <!ATTLIST task-config
+                className CDATA #REQUIRED
+                interval (CUSTOM|ONE_TIME|YEARLY|MONTHLY|WEEKLY|DAILY|HOURS|MINUTES|SECONDS|MILLISECONDS) #REQUIRED
+                year CDATA #IMPLIED
+                monthOfYear (JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER) #IMPLIED
+                dayOfMonth CDATA #IMPLIED
+                dayOfWeek (SUNDAY|MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY) #IMPLIED
+                dayOccurrence (FIRST|SECOND|THIRD|FOURTH|LAST) #IMPLIED
+                hours CDATA #IMPLIED
+                minutes CDATA #IMPLIED
+                seconds CDATA #IMPLIED
+                milliseconds CDATA #IMPLIED
+                initialDelayInMillis CDATA #IMPLIED >
+        <!ELEMENT custom-attributes EMPTY>
+        <!ATTLIST custom-attributes
+                name CDATA #IMPLIED
+                alwaysFail CDATA #IMPLIED>
+        ]>
+
+<!-- Emails (optionally) defined at this level are automatically set as support addresses on all the tasks -->
+<scheduler emails="chris.mcfarland@gmail.com">
+
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.LogSchedulerState" interval="CUSTOM" initialDelayInMillis="1000"/>
+
+    <!-- DatabaseTask test tasks
+         - database task just executes a query on the codetable
+         - alwaysFail=true tests error handling mechanism
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DatabaseTask" interval="SECONDS" seconds="5">
+        <custom-attributes alwaysFail="true"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DatabaseTask" interval="MINUTES" minutes="1"/>
+    -->
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DatabaseTask" interval="SECONDS" seconds="5">
+        <custom-attributes alwaysFail="true"/>
+    </task-config>
+
+    <!-- TimingTest tasks -->
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="HOURS" hours="1" initialDelayInMillis="10">
+        <custom-attributes name="1 HOUR INTERVAL"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="MINUTES" minutes="2" initialDelayInMillis="20">
+        <custom-attributes name="2 MINUTE INTERVAL"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="SECONDS" seconds="45" initialDelayInMillis="30">
+        <custom-attributes name="45 SECOND INTERVAL"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="DAILY" hours="14" minutes="09" seconds="00" initialDelayInMillis="40">
+        <custom-attributes name="DAILY INTERVAL"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="WEEKLY" dayOfWeek="FRIDAY" hours="13" minutes="44" initialDelayInMillis="50">
+        <custom-attributes name="WEEKLY INTERVAL"/>
+    </task-config>
+    <!--  >>> comment this one out if you don't want to see a message every second <<<
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="MILLISECONDS" milliseconds="999" initialDelayInMillis="0">
+        <custom-attributes name="999 MILLISECOND INTERVAL"/>
+    </task-config>
+     -->
+
+    <!-- DateTime Tasks
+         - these tasks should be adjusted as-needed to execute soon and close together
+    -->
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="ONE_TIME" initialDelayInMillis="63000">
+        <custom-attributes name="ONE_TIME #1"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="ONE_TIME" year="2017" monthOfYear="NOVEMBER" dayOfMonth="17" hours="14" minutes="10">
+        <custom-attributes name="ONE_TIME #2"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="MONTHLY" dayOfMonth="17" hours="14" minutes="11">
+        <custom-attributes name="MONTHLY #1"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="MONTHLY" dayOfMonth="LAST_DAY_OF_MONTH" hours="14" minutes="47">
+        <custom-attributes name="MONTHLY #2"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="MONTHLY" dayOfWeek="FRIDAY" dayOccurrence="THIRD" hours="14" minutes="12">
+        <custom-attributes name="MONTHLY #3"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="MONTHLY" dayOfWeek="TUESDAY" dayOccurrence="LAST" hours="01" minutes="00">
+        <custom-attributes name="MONTHLY #4"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DateTimeTask" interval="YEARLY" monthOfYear="NOVEMBER" dayOfMonth="17" hours="14" minutes="14">
+        <custom-attributes name="YEARLY"/>
+    </task-config>
+
+</scheduler>

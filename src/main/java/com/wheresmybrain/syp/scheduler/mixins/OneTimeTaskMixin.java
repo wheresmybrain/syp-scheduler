@@ -2,7 +2,7 @@ package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.SchedulerContext;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 
 import java.util.Date;
 
@@ -13,14 +13,14 @@ import java.util.Date;
  */
 public class OneTimeTaskMixin extends ScheduledTask {
 
-    private iTask task;
+    private Task task;
 
-    public OneTimeTaskMixin(iTask task) {
+    public OneTimeTaskMixin(Task task) {
         this.task = task;
     }
 
     /**
-     * @see iTask#executeTask(SchedulerContext)
+     * @see Task#executeTask(SchedulerContext)
      */
     @Override
     public void executeTask(SchedulerContext schedulerContext) throws Throwable {
@@ -29,7 +29,7 @@ public class OneTimeTaskMixin extends ScheduledTask {
 
     /**
      * Calls <code>getDebugState()</code> method on the wrapped task object.
-     * @see iTask#getDebugState()
+     * @see Task#getDebugState()
      */
     @Override
     public final String[] getDebugState() {

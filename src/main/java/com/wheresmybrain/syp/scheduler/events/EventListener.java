@@ -1,6 +1,9 @@
 package com.wheresmybrain.syp.scheduler.events;
 
+import com.wheresmybrain.syp.scheduler.SchedulerContext;
 import com.wheresmybrain.syp.scheduler.TaskEvent;
+import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.TaskUtils;
 
 /**
  * Implement this interface to create a custom event handling mechanism to
@@ -21,18 +24,18 @@ import com.wheresmybrain.syp.scheduler.TaskEvent;
  *   {@link TaskUtils#fireEvent(TaskEvent)} method from your task
  *   to "fire" the event to the listener(s)</li>
  * <li>Code your application to register your custom event listener using
- *   the {@link TaskScheduler#addEventListener(iEventListener)} method</li>
+ *   the {@link TaskScheduler#addEventListener(EventListener)} method</li>
  *
  * @see TaskEvent
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
-public interface iEventListener {
+public interface EventListener {
 
     /**
      * Implement this method to handle any type of event fired by the tasks.
      *
      * @param event subclass of base {@link TaskEvent} type.
      */
-    public void handleEvent(TaskEvent event);
+    void handleEvent(TaskEvent event);
 
 }

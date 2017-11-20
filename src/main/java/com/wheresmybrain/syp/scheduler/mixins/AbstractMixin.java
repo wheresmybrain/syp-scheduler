@@ -2,7 +2,7 @@ package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.SchedulerContext;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.RecurringTask;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
 
@@ -11,15 +11,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * Abstract base class for all the "Mixin" classes in this package. These are
  * called "Mixin" because the subclasses of this base class "mix in" scheduling
- * capability to any class that implements {@link iTask}.
+ * capability to any class that implements {@link Task}.
  *
  * @author Chris McFarland
  */
 public abstract class AbstractMixin extends RecurringTask {
 
-    private iTask task;
+    private Task task;
 
-    protected AbstractMixin(iTask task) {
+    protected AbstractMixin(Task task) {
         if (task != null) {
             this.task = task;
         } else {
@@ -29,7 +29,7 @@ public abstract class AbstractMixin extends RecurringTask {
 
     /**
      * Calls the <code>executeTask()</code> method on the wrapped task object.
-     * @see iTask#executeTask(SchedulerContext)
+     * @see Task#executeTask(SchedulerContext)
      */
     @Override
     public final void executeTask(SchedulerContext schedulerContext) throws Throwable {
@@ -38,7 +38,7 @@ public abstract class AbstractMixin extends RecurringTask {
 
     /**
      * Calls <code>getDebugState()</code> method on the wrapped task object.
-     * @see iTask#getDebugState()
+     * @see Task#getDebugState()
      */
     @Override
     public final String[] getDebugState() {
@@ -48,7 +48,7 @@ public abstract class AbstractMixin extends RecurringTask {
     /**
      * Called by the framework for troubleshooting purposes.
      */
-    public iTask getInternalTask() {
+    public Task getInternalTask() {
         return this.task;
     }
 

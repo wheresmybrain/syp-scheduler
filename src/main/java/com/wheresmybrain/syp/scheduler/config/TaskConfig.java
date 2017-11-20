@@ -5,7 +5,7 @@ import com.wheresmybrain.syp.scheduler.TaskScheduler;
 import com.wheresmybrain.syp.scheduler.enums.DayOccurrence;
 import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
 import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 
 import java.util.Arrays;
 
@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 public class TaskConfig {
 
-    private iTask task;
+    private Task task;
     private String className;
     private String interval;
     private int year;
@@ -40,7 +40,7 @@ public class TaskConfig {
      * attributes are declared, then the parser will automatically instantiate
      * the task to set them.
      */
-    public iTask getTask() {
+    public Task getTask() {
         return this.task;
     }
 
@@ -50,7 +50,7 @@ public class TaskConfig {
      * attributes are declared, then the parser will automatically instantiate
      * the task to set them.
      */
-    public void setTask(iTask task) {
+    public void setTask(Task task) {
         this.task = task;
     }
 
@@ -323,13 +323,13 @@ public class TaskConfig {
                         // CUSTOM tasks must extend ScheduledTask
                         if (!ScheduledTask.class.isAssignableFrom(c)) {
                             String msg = "CONFIGURATION ERROR: CUSTOM task class (" + className +
-                                    ") does not extend ScheduledTask - declare a different interval=\"...\" if this is an iTask";
+                                    ") does not extend ScheduledTask - declare a different interval=\"...\" if this is an Task";
                             throw new SchedulerConfigException(msg).setCurrentState(this.toString());
                         }
                     } else {
-                        // non-CUSTOM tasks must implement iTask
-                        if (!iTask.class.isAssignableFrom(c)) {
-                            String msg = "CONFIGURATION ERROR: task class ("+className+") must implement iTask!";
+                        // non-CUSTOM tasks must implement Task
+                        if (!Task.class.isAssignableFrom(c)) {
+                            String msg = "CONFIGURATION ERROR: task class ("+className+") must implement Task!";
                             throw new SchedulerConfigException(msg).setCurrentState(this.toString());
                         }
                     }

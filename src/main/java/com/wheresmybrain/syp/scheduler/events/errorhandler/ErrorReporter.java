@@ -11,7 +11,7 @@ package com.wheresmybrain.syp.scheduler.events.errorhandler;
  * in a task that executes once per minute, then you don't want the notification
  * sent to the same recipient every minute!
  */
-public interface iErrorEmailer {
+public interface ErrorReporter {
 
     /**
      * This method will be called by the Scheduler's {@link TaskErrorHandler} to

@@ -4,7 +4,7 @@ import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
 import com.wheresmybrain.syp.scheduler.enums.DayOccurrence;
 import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
 
@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This mixin-style class lets any <code>iTask</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
  * on a monthly schedule, either on a specified dayOfMonth or dayOccurrence.
  * <p/>
  * This is a monthly execution task, which means it should execute once per month, so if it
@@ -47,7 +47,7 @@ public class MonthlyScheduleMixin extends AbstractMixin {
      * @throws IllegalArgumentException if any invalid values are passed
      */
     public MonthlyScheduleMixin(
-            iTask task,
+            Task task,
             int dayOfMonth,
             int hourOfDay,
             int minuteOfHour)
@@ -75,7 +75,7 @@ public class MonthlyScheduleMixin extends AbstractMixin {
      * @throws IllegalArgumentException if any invalid values are passed
      */
     public MonthlyScheduleMixin(
-            iTask task,
+            Task task,
             DayOfWeek dayOfWeek,
             DayOccurrence dayOccurrence,
             int hourOfDay,

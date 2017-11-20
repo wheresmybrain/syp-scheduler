@@ -3,7 +3,7 @@ package com.wheresmybrain.syp.scheduler.events;
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskEvent;
 import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.mixins.AbstractMixin;
 
 /**
@@ -14,9 +14,9 @@ import com.wheresmybrain.syp.scheduler.mixins.AbstractMixin;
  * is passed, and not the actual task).
  * <p/>
  * This class also defines one additional method ({@link #getInnerTask()})
- * that returns the {@link iTask} that fired the event if the ScheduledTask
+ * that returns the {@link Task} that fired the event if the ScheduledTask
  * is a {@link AbstractMixin mixin}. This will provide access to any special
- * methods added to the iTask implementation for event handling purposes.
+ * methods added to the Task implementation for event handling purposes.
  *
  * @author <a href="mailto:chris.mcfarland@gmail.com">chris.mcfarland</a>
  */
@@ -34,10 +34,10 @@ public class TaskProxy {
     /**
      * If the ScheduledTask that fired this event is a {@link AbstractMixin mixin},
      * which is a ScheduledTask subclass, then this method returns the mixin's inner
-     * {@link iTask} that fired the event. But if the task that fired the event is
+     * {@link Task} that fired the event. But if the task that fired the event is
      * a "custom" task (non-mixin subclass), then this method returns null.
      */
-    public iTask getInnerTask() {
+    public Task getInnerTask() {
         if (this.task instanceof AbstractMixin) {
             return ((AbstractMixin)task).getInternalTask();
         } else {
@@ -80,7 +80,7 @@ public class TaskProxy {
     /**
      * If the ScheduledTask that fired this event is a {@link AbstractMixin mixin},
      * which is a ScheduledTask subclass, then this method returns the mixin's inner
-     * {@link iTask} fully qualified class name. But if the task that fired the event
+     * {@link Task} fully qualified class name. But if the task that fired the event
      * is a "custom" task (non-mixin subclass), then this method returns the custom
      * task class name.
      */

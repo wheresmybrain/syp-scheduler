@@ -1,10 +1,10 @@
 package com.wheresmybrain.syp.scheduler.events.errorhandler;
 
 import com.wheresmybrain.syp.scheduler.TaskEvent;
-import com.wheresmybrain.syp.scheduler.events.iEventListener;
+import com.wheresmybrain.syp.scheduler.events.EventListener;
 
 /**
- * Signals a task error to {@link iEventListener listeners} that are interested in this
+ * Signals a task error to {@link EventListener listeners} that are interested in this
  * type of event. This event is generated when any Exception is thrown, but not handled
  * while the task is executing.
  *

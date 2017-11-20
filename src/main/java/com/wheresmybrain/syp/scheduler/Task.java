@@ -1,9 +1,9 @@
 package com.wheresmybrain.syp.scheduler;
 
-import com.wheresmybrain.syp.scheduler.events.iEventListener;
+import com.wheresmybrain.syp.scheduler.events.EventListener;
 
 /**
- * Implement this interface to create a schedule-able task. iTask implementations perform
+ * Implement this interface to create a schedule-able task. Task implementations perform
  * work. The scheduling part is separate, so the Task developer only needs to think about
  * implementing this interface and writing the business logic that gets executed every time
  * the Task is run. The same task can be scheduled to execute in many different ways. See
@@ -15,13 +15,13 @@ import com.wheresmybrain.syp.scheduler.events.iEventListener;
  * run to run. Tasks can also share information with other scheduled tasks, or with the
  * application itself, by writing data to the {@link SchedulerContext}. Tasks can also
  * transmit real-time {@link TaskEvent event} information externally to event
- * {@link iEventListener listeners} using the {@link TaskUtils#fireEvent(TaskEvent)} method.
+ * {@link EventListener listeners} using the {@link TaskUtils#fireEvent(TaskEvent)} method.
  * See {@link TaskEvent} for more information on creating events and listeners to
  * externalize data.
  *
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
-public interface iTask {
+public interface Task {
 
     /**
      * Implement this method to execute the task logic.

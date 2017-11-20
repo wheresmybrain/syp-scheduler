@@ -3,7 +3,7 @@ package com.wheresmybrain.syp.scheduler.mixins;
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
 import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
 import com.wheresmybrain.syp.scheduler.utils.TruncatedDate;
 
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This mixin-style class lets any <code>iTask</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
  * on a yearly schedule on the specified monthOfYear and dayOfMonth.
  * <p/>
  * This is a yearly execution task, which means it should execute once per year, so if it
@@ -46,7 +46,7 @@ public class YearlyScheduleMixin extends AbstractMixin {
      * @throws IllegalArgumentException if any invalid values are passed
      */
     public YearlyScheduleMixin(
-            iTask task,
+            Task task,
             MonthOfYear monthOfYear,
             int dayOfMonth,
             int hourOfDay,

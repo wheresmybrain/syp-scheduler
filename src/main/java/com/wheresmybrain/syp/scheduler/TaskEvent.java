@@ -1,18 +1,19 @@
 package com.wheresmybrain.syp.scheduler;
 
+import com.wheresmybrain.syp.scheduler.events.EventListener;
 import com.wheresmybrain.syp.scheduler.events.TaskProxy;
 
 import java.util.Date;
 
 /**
  * Abstract base class for events that are fired by scheduler tasks and handled by
- * {@link iEventListener listeners}. Tasks fire events to either communicate or have
+ * {@link EventListener listeners}. Tasks fire events to either communicate or have
  * a situation handled outside the task. How the event is handled is dependent on the
  * corresponding listener implemented specifically for handling the event.
  * <p/>
  * Any application can create any event type by extending this class, as
- * long as it also creates a {@link iTask scheduledTask} to fire it, and a
- * {@link iEventListener listener} to handle it.
+ * long as it also creates a {@link Task scheduledTask} to fire it, and a
+ * {@link EventListener listener} to handle it.
  * <p/>
  * <b>HOW TO CREATE, FIRE AND HANDLE AN EVENT:</b>
  * <ol>
@@ -25,14 +26,14 @@ import java.util.Date;
  * added by the framework to the event, and is accessible via the event's getTask() method.
  * </li>
  * <li>
- * Fire the event - It's super easy to "fire" an event from inside your {@link iTask scheduledTask's}
+ * Fire the event - It's super easy to "fire" an event from inside your {@link Task scheduledTask's}
  * <code>executeTask()</code> method - just instantiate and populate the data in your event object,
  * and execute this the method: {@link TaskUtils#fireEvent(TaskEvent)}
  * </li>
  * <li>
  * Handle the event - Handling the event involves 2 steps: (a) create the "listener" class, and
  * (b) add the listener to the <i>TaskScheduler</i>. To create the listener class, just create a
- * new class that implements {@link iEventListener} and implement the <code>handleEvent()</code> method to
+ * new class that implements {@link EventListener} and implement the <code>handleEvent()</code> method to
  * get the information to pass in your event and use it as needed. <b>Make sure you only handle *your*
  * event because every event fired by every scheduledTask comes through this method!</b>. You can
  * do it like this:
@@ -46,7 +47,7 @@ import java.util.Date;
  *     }
  * </pre>
  * Once you create your listener, you can add it to TaskScheduler with the following method:
- * {@link TaskScheduler#addEventListener(iEventListener)}
+ * {@link TaskScheduler#addEventListener(EventListener)}
  * </li>
  * </ol>
  *

@@ -2,12 +2,12 @@ package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
 import com.wheresmybrain.syp.scheduler.TaskScheduler;
-import com.wheresmybrain.syp.scheduler.iTask;
+import com.wheresmybrain.syp.scheduler.Task;
 
 import java.util.Date;
 
 /**
- * This mixin-style class lets any <code>iTask</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
  * on a second-interval schedule.
  *
  * @author Chris McFarland
@@ -24,7 +24,7 @@ public class SecondIntervalScheduleMixin extends AbstractMixin {
      * @param intervalInSeconds the number of seconds in the interval - MUST be > 0.
      * @throws IllegalArgumentException if any invalid values are passed
      */
-    public SecondIntervalScheduleMixin(iTask task, int intervalInSeconds) {
+    public SecondIntervalScheduleMixin(Task task, int intervalInSeconds) {
         super(task);
         if (intervalInSeconds > 0) {
             this.intervalInSeconds = intervalInSeconds;

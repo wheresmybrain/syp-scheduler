@@ -1,8 +1,8 @@
 package com.wheresmybrain.syp.scheduler;
 
+import com.wheresmybrain.syp.scheduler.events.EventListener;
 import com.wheresmybrain.syp.scheduler.events.TaskProxy;
 import com.wheresmybrain.syp.scheduler.events.errorhandler.TaskErrorEvent;
-import com.wheresmybrain.syp.scheduler.events.iEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * This class defines public utility methods useful to the developer of
- * {@link iTask Scheduled Tasks} to get information and access to functions that would
+ * {@link Task Scheduled Tasks} to get information and access to functions that would
  * not be otherwise accessible. <b>Note that these utility methods can
  * only be called when the task is executed!</b>
  *
@@ -28,7 +28,7 @@ public final class TaskUtils {
     private static InheritableThreadLocal<ScheduledTask> taskForThread = new InheritableThreadLocal<>();
 
     // maintaining a list of event listeners
-    private static List<iEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
+    private static List<EventListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * Associates the task with the current (task) Thread so it
@@ -48,24 +48,24 @@ public final class TaskUtils {
     }
 
     /**
-     * Tasks (both {@link iTask} implementers and custom {@link ScheduledTask} tasks)
+     * Tasks (both {@link Task} implementers and custom {@link ScheduledTask} tasks)
      * can execute this method to transmit {@link TaskEvent events} to all the registered
      * event listeners. You can create custom events for externalizing real-time information
-     * from your tasks by extending TaskEvent, and implementing {@link iEventListener} and
+     * from your tasks by extending TaskEvent, and implementing {@link EventListener} and
      * registering your listener with the TaskScheduler.
      * <p/>
      * Note that only tasks can call this method or a runtime exception is thrown.
      * <p/>
      * It is important for developers to know that this method sets the {@link TaskProxy}
      * that calls this method on the event transparently. This gives the event handler
-     * access to the ScheduledTask public API. If you implemented iTask, then your task
+     * access to the ScheduledTask public API. If you implemented Task, then your task
      * object is also accessible from the TaskProxy so the event handler has access to it.
      * <p/>
      * Don't use this method to send {@link TaskErrorEvent error events}, because
      * that is already being done automatically by the framework!
      *
      * @param event the event to fire to listeners
-     * @see iEventListener
+     * @see EventListener
      */
     public static void fireEvent(TaskEvent event) {
         TaskProxy taskProxy = event.getTaskProxy();
@@ -75,19 +75,19 @@ public final class TaskUtils {
                 taskProxy = currentTask.getTaskProxy();
                 event.setTaskProxy(taskProxy);
             } else {
-                throw new IllegalStateException("Only tasks (iTask, custom tasks) can call this method!");
+                throw new IllegalStateException("Only tasks (Task, custom tasks) can call this method!");
             }
         }
         // let listeners handle the event
-        for (iEventListener listener : listeners) {
+        for (EventListener listener : listeners) {
             listener.handleEvent(event);
         }
     }
 
     /**
      * Returns the task id for the task that calls this method. This is used by the
-     * {@link iTask} implementations, which don't have any other means of knowing the
-     * task id of the "mixin" object that wraps the iTask.
+     * {@link Task} implementations, which don't have any other means of knowing the
+     * task id of the "mixin" object that wraps the Task.
      * <p/>
      * Note that only tasks can call this method or a runtime exception is thrown.
      */
@@ -102,7 +102,7 @@ public final class TaskUtils {
 
     /**
      * Returns the task info (toString) for the task that calls this method. This is used
-     * by the {@link iTask} implementations, which don't have any other means of knowing
+     * by the {@link Task} implementations, which don't have any other means of knowing
      * information about the "mixin" (ScheduledTask) object that wraps them.
      * <p/>
      * Note that only tasks can call this method or a runtime exception is thrown.
@@ -118,10 +118,10 @@ public final class TaskUtils {
 
     /**
      * Called by a task to add a custom event listener at runtime. Use the
-     * {@link TaskScheduler#addEventListener(iEventListener)} method to add event
+     * {@link TaskScheduler#addEventListener(EventListener)} method to add event
      * listeners during setup.
      */
-    public static void addEventListener(iEventListener eventListener) {
+    public static void addEventListener(EventListener eventListener) {
         listeners.add(eventListener);
     }
 

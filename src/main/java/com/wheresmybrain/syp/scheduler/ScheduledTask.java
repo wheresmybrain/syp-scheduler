@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  * This class can be used to create a <i>custom task</i> that executes one time (see next paragraph).
  * However, this class is not meant to be extended by the developer to create a schedule-able task. It
- * is much easier to create a task by implementing {@link iTask}, and then schedule the task using one
+ * is much easier to create a task by implementing {@link Task}, and then schedule the task using one
  * of the {@link TaskScheduler} <code>schedule...</code> methods.
  * <p/>
  * This class can be extended to create a one-time execution Task by following two steps:
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * extend the {@link RecurringTask} class and follow the same two steps. All executions of a scheduled
  * task are performed by the same task instance, so you can code your task as a stateful object that
  * can share its state information across all executions. As already mentioned though, it's easier to
- * create tasks by implementing <code>iTask</code> and scheduling the task through <code>TaskScheduler</code>.
+ * create tasks by implementing <code>Task</code> and scheduling the task through <code>TaskScheduler</code>.
  *
  * @see TaskScheduler
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
