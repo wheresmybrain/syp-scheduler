@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * This class can be used to create a <i>custom task</i> that executes one time (see next paragraph).
  * However, this class is not meant to be extended by the developer to create a schedule-able task. It
  * is much easier to create a task by implementing {@link Task}, and then schedule the task using one
- * of the {@link TaskScheduler} <code>schedule...</code> methods.
+ * of the {@link TaskScheduler} <code>schedule</code> methods (see TaskScheduler api.
  * <p/>
  * This class can be extended to create a one-time execution Task by following two steps:
  * <ol>
@@ -318,11 +318,16 @@ public abstract class ScheduledTask implements Runnable, Delayed {
      * Returns an information String containing the task class, task id and internal state.
      */
     public String getTaskInfo() {
-        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName())
-                .append(" (Task #").append(this.taskId).append(") execution{")
-                .append(TimeUtils.getTimeDescription(this.getDelay(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS))
-                .append("} internal state: ").append(this.internalState);
-        if (this.paused) sb.append(" (PAUSED)");
+        long delay = getDelay(TimeUnit.MILLISECONDS);
+        StringBuilder sb = new StringBuilder(getClass().getSimpleName())
+                .append(" (Task #").append(getTaskId()).append(") ");
+        if (delay > 0) {
+            sb.append("next execution[")
+                    .append(TimeUtils.getTimeDescription(delay, TimeUnit.MILLISECONDS))
+                    .append("] ");
+        }
+        sb.append("internal state: ").append(getInternalState());
+        if (isPaused()) sb.append(" (PAUSED)");
         return sb.toString();
     }
 

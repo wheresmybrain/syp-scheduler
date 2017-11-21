@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
+ * This is an example of a custom recurring task -
  * Logs the tasks (executing and scheduled) inside the TaskScheduler
  * once per minute.
  *
@@ -27,7 +28,7 @@ public class LogSchedulerState extends RecurringTask {
      */
     @Override
     public void executeTask(SchedulerContext context) throws Throwable {
-        log.info(this.getScheduler().getState());
+        log.info(this.getScheduler().getState(true));
         this.executed = true;
     }
 

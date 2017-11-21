@@ -58,11 +58,16 @@ public abstract class AbstractMixin extends RecurringTask {
      */
     @Override
     public final String getTaskInfo() {
-        StringBuilder sb = new StringBuilder(this.task.getClass().getSimpleName())
-                .append(" (Task #").append(this.getTaskId()).append(") execution{")
-                .append(TimeUtils.getTimeDescription(this.getDelay(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS))
-                .append("} internal state: ").append(this.getInternalState());
-        if (this.isPaused()) sb.append(" (PAUSED)");
+        long delay = getDelay(TimeUnit.MILLISECONDS);
+        StringBuilder sb = new StringBuilder(task.getClass().getSimpleName())
+                .append(" (Task #").append(getTaskId()).append(") ");
+        if (delay > 0) {
+            sb.append("next execution[")
+                    .append(TimeUtils.getTimeDescription(delay, TimeUnit.MILLISECONDS))
+                    .append("] ");
+        }
+        sb.append("internal state: ").append(getInternalState());
+        if (isPaused()) sb.append(" (PAUSED)");
         return sb.toString();
     }
 

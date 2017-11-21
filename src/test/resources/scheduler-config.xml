@@ -27,15 +27,15 @@
 
     <task-config className="com.wheresmybrain.syp.scheduler.testtasks.LogSchedulerState" interval="CUSTOM" initialDelayInMillis="1000"/>
 
-    <!-- DatabaseTask test tasks
+    <!-- AlwaysFailTask test tasks
          - database task just executes a query on the codetable
          - alwaysFail=true tests error handling mechanism
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DatabaseTask" interval="SECONDS" seconds="5">
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.AlwaysFailTasksk" interval="SECONDS" seconds="5">
         <custom-attributes alwaysFail="true"/>
     </task-config>
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DatabaseTask" interval="MINUTES" minutes="1"/>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.AlwaysFailTasksk" interval="MINUTES" minutes="1"/>
     -->
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.DatabaseTask" interval="SECONDS" seconds="5">
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.AlwaysFailTask" interval="SECONDS" seconds="5">
         <custom-attributes alwaysFail="true"/>
     </task-config>
 

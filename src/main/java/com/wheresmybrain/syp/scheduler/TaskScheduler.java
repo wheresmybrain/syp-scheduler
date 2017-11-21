@@ -92,13 +92,16 @@ public class TaskScheduler implements EventListener {
 
     private static Logger log = LoggerFactory.getLogger(TaskScheduler.class);
 
+    private static final String EOL = System.getProperty("line.separator");
+
     /**
      * Use this constant for scheduling a monthly or yearly task to schedule a day relative to
-     * the last day of the month. This example schedules a monthly task on the 2nd to the last day of every month:
+     * the last day of the month.
      * <p/>
-     * <code>
+     * This example schedules a monthly task on the 2nd to the last day of every month:
+     * <pre>
      *   <task className="org.mypkg.Task1" intervalType="MONTHLY" dayOfMonth="LAST_DAY_OF_MONTH-1" hour="02" minute="00"/>
-     * </code>
+     * </pre>
      */
     public static final int LAST_DAY_OF_MONTH = -1000;
 
@@ -1116,19 +1119,25 @@ public class TaskScheduler implements EventListener {
     }
 
     /**
-     * Returns task report
+     * Returns task report consisting of the task info for every scheduled task.
+     * @param prettyPrint If set to true, then the task info for every task is printed on its own line.
+     *                    Else, if set to false, then all tasks printed on one line.
      */
-    public String getState() {
+    public String getState(boolean prettyPrint) {
         StringBuilder sb = new StringBuilder("Scheduler state: {");
         int count = 0;
         synchronized (this.taskMap) {
             for (Integer id : taskMap.keySet()) {
                 ScheduledTask task = taskMap.get(id);
-                if (count++ > 0) sb.append(", ");
+                if (prettyPrint) {
+                    sb.append(EOL).append("    ");
+                } else if (count++ > 0) {
+                    sb.append(", ");
+                }
                 sb.append(task);
             }
         }
-        sb.append('}');
+        sb.append((prettyPrint) ? EOL : "").append('}');
         return sb.toString();
     }
 
