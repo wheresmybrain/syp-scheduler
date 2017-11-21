@@ -11,8 +11,10 @@ import java.util.Date;
 /**
  * This task tests accuracy of the scheduling by printing out the execution time
  * and interval since the last execution (in hours, minutes, seconds and milliseconds).
- * Schedule this task across a variety of intervals and make sure to name the task to
- * <b>indicate what interval it was scheduled for</b> so you know how accurate it is.
+ * Schedule this task across a variety of intervals and make sure to set the 'name' to
+ * indicate what interval it was scheduled for so you know how accurate it is. For
+ * example, set name = "45 SECOND INTERVAL" when you schedule the TimingTest task to
+ * run every 45 seconds.
  *
  * @author Chris McFarland
  */

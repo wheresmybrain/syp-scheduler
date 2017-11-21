@@ -13,10 +13,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 /**
- * This test task is programmed to automatically remove itself if it fails 7 times
- * in a row, which makes it good for testing (and demonstrating) the error handling
- * mechanism. This task can be forced to fail by passing the flag alwaysFail=true in
- * to the task's constructor. If the flag alwaysFail=false, then this task just
+ * This test task is programmed to automatically remove itself after it fails 7 times
+ * in a row, which makes it good for testing (and demonstrating) the event handling
+ * mechanism > on 7th failure the task will fire a custom <code>CancelEvent</code>,
+ * which is handled by the {@link com.wheresmybrain.syp.scheduler.testevents.CancelEventHandler}.
+ * <p/>
+ * This task can be forced to fail by passing the flag alwaysFail=true in to the task's
+ * constructor, or . If the flag alwaysFail=false, then this task just
  * writes a line to the log.
  *
  * @author Chris McFarland
