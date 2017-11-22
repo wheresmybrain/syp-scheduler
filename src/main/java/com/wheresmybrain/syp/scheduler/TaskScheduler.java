@@ -943,6 +943,7 @@ public class TaskScheduler implements EventListener {
         if (newTask) {
             // create and set a new id on the task
             this.assignTaskId(task);
+            taskId = task.getTaskId();
         }
         // scheduled tasks are put on the map until they finish executing
         this.taskMap.put(new Integer(taskId), task);
