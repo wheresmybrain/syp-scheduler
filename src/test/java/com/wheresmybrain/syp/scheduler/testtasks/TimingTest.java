@@ -2,6 +2,7 @@ package com.wheresmybrain.syp.scheduler.testtasks;
 
 import com.wheresmybrain.syp.scheduler.SchedulerContext;
 import com.wheresmybrain.syp.scheduler.Task;
+import com.wheresmybrain.syp.scheduler.TaskUtils;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class TimingTest implements Task {
     private static Logger log = LoggerFactory.getLogger(TimingTest.class);
 
     private static final String TEST_MESSAGE =
-            "[TIMING TEST] (%1$tH:%1$tM:%1$tS.%1$tL) Task [%2$s] - time since last execution: %3$s%n";
+            "[TIMING TEST] (#%1$d) Task [%2$s] - time since last execution: %3$s%n";
 
     private String name;
     private Date lastExecution;
@@ -35,9 +36,10 @@ public class TimingTest implements Task {
     public void executeTask(SchedulerContext schedulerContext) throws Throwable {
         this.executionNumber += 1;
         Date thisExecution = new Date();
-        if (executionNumber > 1) {
+        if (lastExecution != null) {
+            int taskId = TaskUtils.getTaskId();
             String interval = TimeUtils.getIntervalDescription(lastExecution, thisExecution);
-            log.info(String.format(TEST_MESSAGE, thisExecution, this.name, interval));
+            log.info(String.format(TEST_MESSAGE, taskId, name, interval));
         }
         this.lastExecution = thisExecution;
     }
