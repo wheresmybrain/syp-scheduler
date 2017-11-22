@@ -50,19 +50,19 @@
          - Comment out any of the <task-config> declarations you don't want to run.
          - See TimingTest javadoc for more information.
     -->
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="HOURS" hours="1" initialDelayInMillis="10">
-        <custom-attributes name="1 HOUR INTERVAL"/>
-    </task-config>
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="MINUTES" minutes="2" initialDelayInMillis="20">
-        <custom-attributes name="2 MINUTE INTERVAL"/>
-    </task-config>
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="SECONDS" seconds="45" initialDelayInMillis="30">
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="SECONDS" seconds="45" initialDelayInMillis="100">
         <custom-attributes name="45 SECOND INTERVAL"/>
     </task-config>
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="DAILY" hours="14" minutes="02" seconds="00" initialDelayInMillis="40">
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="MINUTES" minutes="2" initialDelayInMillis="200">
+        <custom-attributes name="2 MINUTE INTERVAL"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="HOURS" hours="1" initialDelayInMillis="300">
+        <custom-attributes name="1 HOUR INTERVAL"/>
+    </task-config>
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="DAILY" hours="14" minutes="02" seconds="00" initialDelayInMillis="400">
         <custom-attributes name="DAILY INTERVAL"/>
     </task-config>
-    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="WEEKLY" dayOfWeek="TUESDAY" hours="14" minutes="03" initialDelayInMillis="50">
+    <task-config className="com.wheresmybrain.syp.scheduler.testtasks.TimingTest" interval="WEEKLY" dayOfWeek="TUESDAY" hours="14" minutes="03" initialDelayInMillis="500">
         <custom-attributes name="WEEKLY INTERVAL"/>
     </task-config>
     <!--  >>> comment this one out if you don't want to see a message every second <<<
