@@ -403,10 +403,10 @@ public class TaskScheduler implements EventListener {
     }
 
     /**
-     * Thread-safe method schedules the task to run periodically according to the
-     * specified interval and intervalType (units). For example, to schedule a task
-     * to run once every ten minutes, you would specify IntervalType=MINUTES with
-     * interval=10. Tasks scheduled with this method will be rescheduled for the next
+     * Thread-safe method schedules the task to run periodically according to the specified
+     * interval and intervalType (enum for HOURS, MINUTES, SECONDS, MILLISECONDS). For example,
+     * to schedule a task to run once every ten minutes, you would specify intervalType=MINUTES
+     * with interval=10. Tasks scheduled with this method will be rescheduled for the next
      * interval once they are done - for example, if a task is scheduled to run once
      * every ten minutes, but it takes five minutes to run, then that task will follow
      * this sequence: run for 5 minutes - wait 10 minutes - run for 5 minutes - wait 10 minutes - ...
@@ -422,26 +422,26 @@ public class TaskScheduler implements EventListener {
      *
      * @param task the class that performs the work. This can be any class
      *   that implements Task, and the same task object can be scheduled multiple times.
-     * @param initialDelayInMillis the delay (in milliseconds) before the very first
-     *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
-     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
-     *   ignored and the task's internal scheduling interval is used instead.
      * @param interval the length of time (in the specified intervalType units) between
      *   executions. For example an interval=5 with intervalType=MINUTES creates a task
      *   that runs every 5 minutes.
      * @param intervalType enum constant that determines the units of the
      *   interval: {HOURS, MINUTES, SECONDS, MILLISECONDS} are the only valid intervals
      *   for this method. See: {@link IntervalType}.
-     * @return task id for the scheduled task. (Note: the task id can be used to un-schedule
-     *   the task at any time).
+     * @param initialDelayInMillis the delay (in milliseconds) before the very first
+     *   execution. If the initialDelayInMillis=0, then the task executes immediately
+     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
+     *   ignored and the task's internal scheduling interval is used instead.
+     * @return task id for the scheduled task. (Note: the task id can be used to cancel
+     *   or pause/resume the task at any time).
      * @throws IllegalArgumentException if an invalid intervalType is specified.
      */
     public final int scheduleIntervalExecution(
             Task task,
-            long initialDelayInMillis,
             int interval,
-            IntervalType intervalType) {
+            IntervalType intervalType,
+            long initialDelayInMillis) {
 
         // make the task schedule-able w/ one of the mixins
         RecurringTask intervalTask = null;
@@ -473,13 +473,6 @@ public class TaskScheduler implements EventListener {
      * implementing the {@link Task} interface, then call this method to execute that task
      * every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
-     * method, this method does not have a mechanism for executing
-     * the task immediately (or with a short delay). The purpose of <code>scheduleDailyExecution</code>
-     * is to execute at a scheduled time. If you need to perform an initial execution before
-     * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
-     * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
@@ -489,16 +482,26 @@ public class TaskScheduler implements EventListener {
      * @param hourOfDay hour (0-23) to execute each day
      * @param minuteOfHour minute (0-59) to execute each hour
      * @param secondOfMinute minute (0-59) to execute each minute
+     * @param initialDelayInMillis the delay (in milliseconds) before the very first
+     *   execution. If the initialDelayInMillis=0, then the task executes immediately
+     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
+     *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      */
-    public final int scheduleDailyExecution(Task task, int hourOfDay, int minuteOfHour, int secondOfMinute) {
-
+    public final int scheduleDailyExecution(
+            Task task,
+            int hourOfDay,
+            int minuteOfHour,
+            int secondOfMinute,
+            long initialDelayInMillis)
+    {
         // make the task schedule-able w/ one of the mixins
         RecurringTask dailyTask = new DailyScheduleMixin(task, hourOfDay, minuteOfHour, secondOfMinute);
 
         // schedule the task for execution
-        return this.scheduleTask(dailyTask, -1);
+        return this.scheduleTask(dailyTask, initialDelayInMillis);
     }
 
     /**
@@ -510,13 +513,6 @@ public class TaskScheduler implements EventListener {
      * the {@link Task} interface, then call this method to execute that task every week.
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
-     * method, this method does not have a mechanism for executing
-     * the task immediately (or with a short delay). The purpose of <code>scheduleWeeklyExecution</code>
-     * is to execute at a scheduled time. If you need to perform an initial execution before
-     * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
-     * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
@@ -526,6 +522,11 @@ public class TaskScheduler implements EventListener {
      * @param dayOfWeek enum constant for day-of-week
      * @param hourOfDay hour (0-23) to execute each day
      * @param minuteOfHour minute (0-59) to execute each hour
+     * @param initialDelayInMillis the delay (in milliseconds) before the very first
+     *   execution. If the initialDelayInMillis=0, then the task executes immediately
+     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
+     *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      * @see DayOfWeek
@@ -534,13 +535,14 @@ public class TaskScheduler implements EventListener {
             Task task,
             DayOfWeek dayOfWeek,
             int hourOfDay,
-            int minuteOfHour)
+            int minuteOfHour,
+            long initialDelayInMillis)
     {
         // make the task schedule-able w/ one of the mixins
         RecurringTask weeklyTask = new WeeklyScheduleMixin(task, dayOfWeek, hourOfDay, minuteOfHour);
 
         // schedule the task for execution
-        return this.scheduleTask(weeklyTask, -1);
+        return this.scheduleTask(weeklyTask, initialDelayInMillis);
     }
 
     /**
@@ -551,13 +553,6 @@ public class TaskScheduler implements EventListener {
      * To use this task the developer will need to create a <i>Task</i> class by implementing
      * the {@link Task} interface, then call this method to execute that task every month.
      * Any Task can be scheduled multiple times with any interval.
-     * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
-     * method, this method does not have a mechanism for executing
-     * the task immediately (or with a short delay). The purpose of <code>scheduleMonthlyExecution</code>
-     * is to execute at a scheduled time. If you need to perform an initial execution before
-     * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -573,6 +568,11 @@ public class TaskScheduler implements EventListener {
      *   dayOfMonth=MonthlyScheduleMixin.LAST_DAY_OF_MONTH-1 (executes on next to last day of month).
      * @param hourOfDay hour (0-23) to execute each day
      * @param minuteOfHour minute (0-59) to execute each hour
+     * @param initialDelayInMillis the delay (in milliseconds) before the very first
+     *   execution. If the initialDelayInMillis=0, then the task executes immediately
+     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
+     *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      */
@@ -580,13 +580,14 @@ public class TaskScheduler implements EventListener {
             Task task,
             int dayOfMonth,
             int hourOfDay,
-            int minuteOfHour)
+            int minuteOfHour,
+            long initialDelayInMillis)
     {
         // make the task schedule-able w/ one of the mixins
         RecurringTask monthlyTask = new MonthlyScheduleMixin(task, dayOfMonth, hourOfDay, minuteOfHour);
 
         // schedule the task for execution
-        return this.scheduleTask(monthlyTask, -1);
+        return this.scheduleTask(monthlyTask, initialDelayInMillis);
     }
 
     /**
@@ -598,13 +599,6 @@ public class TaskScheduler implements EventListener {
      * To use this task the developer will need to create a <i>Task</i> class by
      * implementing the {@link Task} interface, then call this method to execute that
      * task every day. Any Task can be scheduled multiple times with any interval.
-     * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
-     * method, this method does not have a mechanism for executing
-     * the task immediately (or with a short delay). The purpose of <code>scheduleMonthlyExecution</code>
-     * is to execute at a scheduled time. If you need to perform an initial execution before
-     * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -618,6 +612,11 @@ public class TaskScheduler implements EventListener {
      *   execute the task the last Sunday of every month.
      * @param hourOfDay hour (0-23) to execute each day
      * @param minuteOfHour minute (0-59) to execute each hour
+     * @param initialDelayInMillis the delay (in milliseconds) before the very first
+     *   execution. If the initialDelayInMillis=0, then the task executes immediately
+     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
+     *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      * @see DayOfWeek
@@ -628,13 +627,14 @@ public class TaskScheduler implements EventListener {
             DayOfWeek dayOfWeek,
             DayOccurrence dayOccurrence,
             int hourOfDay,
-            int minuteOfHour)
+            int minuteOfHour,
+            long initialDelayInMillis)
     {
         // make the task schedule-able w/ one of the mixins
         RecurringTask monthlyTask = new MonthlyScheduleMixin(task, dayOfWeek, dayOccurrence, hourOfDay, minuteOfHour);
 
         // schedule the task for execution
-        return this.scheduleTask(monthlyTask, -1);
+        return this.scheduleTask(monthlyTask, initialDelayInMillis);
     }
 
     /**
@@ -645,13 +645,6 @@ public class TaskScheduler implements EventListener {
      * To use this task the developer will need to create a <i>Task</i> class by implementing
      * the {@link Task} interface, then call this method to execute that task every year.
      * Any Task can be scheduled multiple times with any interval.
-     * <p/>
-     * Unlike the {@link #scheduleIntervalExecution(Task, long, int, IntervalType) schedule interval}
-     * method, this method does not have a mechanism for executing
-     * the task immediately (or with a short delay). The purpose of <code>scheduleYearlyExecution</code>
-     * is to execute at a scheduled time. If you need to perform an initial execution before
-     * letting the task run on its schedule, then code an additional one-time execution
-     * of the same task using {@link #scheduleOneTimeExecution(Task, long)}.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
      * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
@@ -668,6 +661,11 @@ public class TaskScheduler implements EventListener {
      *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
      * @param hourOfDay hour (0-23) to execute on the specified dayOfMonth
      * @param minuteOfHour minute (0-59) to execute on the specfied hour
+     * @param initialDelayInMillis the delay (in milliseconds) before the very first
+     *   execution. If the initialDelayInMillis=0, then the task executes immediately
+     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   comes last. If initialDelayInMillis is < 0, then the initial delay is
+     *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      */
@@ -676,13 +674,14 @@ public class TaskScheduler implements EventListener {
             MonthOfYear monthOfYear,
             int dayOfMonth,
             int hourOfDay,
-            int minuteOfHour)
+            int minuteOfHour,
+            long initialDelayInMillis)
     {
         // make the task schedule-able w/ one of the mixins
         RecurringTask yearlyTask = new YearlyScheduleMixin(task, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour);
 
         // schedule the task for execution
-        return this.scheduleTask(yearlyTask, -1);
+        return this.scheduleTask(yearlyTask, initialDelayInMillis);
     }
 
     /**
@@ -857,25 +856,25 @@ public class TaskScheduler implements EventListener {
             } else if (interval.equals("HOURS")) {
                 // schedule HOUR interval task
                 int hours = taskConfig.getHours();
-                taskId = this.scheduleIntervalExecution(task, delay, hours, IntervalType.HOURS);
+                taskId = this.scheduleIntervalExecution(task, hours, IntervalType.HOURS, delay);
             } else if (interval.equals("MINUTES")) {
                 // schedule MINUTE interval task
                 int minutes = taskConfig.getMinutes();
-                taskId = this.scheduleIntervalExecution(task, delay, minutes, IntervalType.MINUTES);
+                taskId = this.scheduleIntervalExecution(task, minutes, IntervalType.MINUTES, delay);
             } else if (interval.equals("SECONDS")) {
                 // schedule second interval task
                 int seconds = taskConfig.getSeconds();
-                taskId = this.scheduleIntervalExecution(task, delay, seconds, IntervalType.SECONDS);
+                taskId = this.scheduleIntervalExecution(task, seconds, IntervalType.SECONDS, delay);
             } else if (interval.equals("MILLISECONDS")) {
                 // schedule millisecond interval task
                 int millis = taskConfig.getMilliseconds();
-                taskId = this.scheduleIntervalExecution(task, delay, millis, IntervalType.MILLISECONDS);
+                taskId = this.scheduleIntervalExecution(task, millis, IntervalType.MILLISECONDS, delay);
             } else if (interval.equals("DAILY")) {
                 // schedule DAILY interval task
                 int hour = taskConfig.getHours();
                 int minute = taskConfig.getMinutes();
                 int second = taskConfig.getSeconds();
-                taskId = this.scheduleDailyExecution(task, hour, minute, second);
+                taskId = this.scheduleDailyExecution(task, hour, minute, second, delay);
             } else if (interval.equals("WEEKLY")) {
                 // schedule WEEKLY interval task
                 try {
@@ -885,7 +884,7 @@ public class TaskScheduler implements EventListener {
                 }
                 int hour = taskConfig.getHours();
                 int minute = taskConfig.getMinutes();
-                taskId = this.scheduleWeeklyExecution(task, dayOfWeek, hour, minute);
+                taskId = this.scheduleWeeklyExecution(task, dayOfWeek, hour, minute, delay);
             } else if (interval.equals("MONTHLY")) {
                 // schedule MONTHLY interval task
                 int day = taskConfig.getDayOfMonthInt();
@@ -893,7 +892,7 @@ public class TaskScheduler implements EventListener {
                 int minute = taskConfig.getMinutes();
                 if (day > 0 || day <= TaskScheduler.LAST_DAY_OF_MONTH) {
                     // using 1st Monthly scheduler technique - dayOfMonth
-                    taskId = this.scheduleMonthlyExecution(task, day, hour, minute);
+                    taskId = this.scheduleMonthlyExecution(task, day, hour, minute, delay);
                 } else {
                     // using 2nd Monthly scheduler technique - dayOfWeek occurrence w/in month
                     try {
@@ -906,7 +905,7 @@ public class TaskScheduler implements EventListener {
                     } catch (NullPointerException ex) {
                         throw new SchedulerConfigException("required 'dayOccurrence' not specified: "+taskConfig, ex);
                     }
-                    taskId = this.scheduleMonthlyExecution(task, dayOfWeek, dayOccurrence, hour, minute);
+                    taskId = this.scheduleMonthlyExecution(task, dayOfWeek, dayOccurrence, hour, minute, delay);
                 }
             } else if (interval.equals("YEARLY")) {
                 // schedule YEARLY interval task
@@ -918,7 +917,7 @@ public class TaskScheduler implements EventListener {
                 int day = taskConfig.getDayOfMonthInt();
                 int hour = taskConfig.getHours();
                 int minute = taskConfig.getMinutes();
-                taskId = this.scheduleYearlyExecution(task, monthOfYear, day, hour, minute);
+                taskId = this.scheduleYearlyExecution(task, monthOfYear, day, hour, minute, delay);
             }
         }
 
@@ -1126,7 +1125,7 @@ public class TaskScheduler implements EventListener {
     public String getState(boolean prettyPrint) {
         StringBuilder sb = new StringBuilder("Scheduler state: {");
         int count = 0;
-        synchronized (this.taskMap) {
+        synchronized (taskMap) {
             for (Integer id : taskMap.keySet()) {
                 ScheduledTask task = taskMap.get(id);
                 if (prettyPrint) {
