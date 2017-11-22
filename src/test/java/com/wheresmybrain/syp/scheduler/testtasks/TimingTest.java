@@ -36,11 +36,10 @@ public class TimingTest implements Task {
     public void executeTask(SchedulerContext schedulerContext) throws Throwable {
         this.executionNumber += 1;
         Date thisExecution = new Date();
-        if (lastExecution != null) {
-            int taskId = TaskUtils.getTaskId();
-            String interval = TimeUtils.getIntervalDescription(lastExecution, thisExecution);
-            log.info(String.format(TEST_MESSAGE, taskId, name, interval));
-        }
+        int taskId = TaskUtils.getTaskId();
+        String interval = (lastExecution != null) ?
+                TimeUtils.getIntervalDescription(lastExecution, thisExecution) : "(first execution!)";
+        log.info(String.format(TEST_MESSAGE, taskId, name, interval));
         this.lastExecution = thisExecution;
     }
 
