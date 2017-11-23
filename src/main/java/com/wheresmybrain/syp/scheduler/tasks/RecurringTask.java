@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.tasks;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.enums.TaskInternalState;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  * This class <b>should not</b> be extended directly by the developer unless custom scheduling
  * behavior is required. There are easier ways to create Tasks to execute
- * on a schedule - see {@link TaskScheduler} javadoc.
+ * on a schedule - see {@link SypScheduler} javadoc.
  *
  * @author Chris McFarland
  */

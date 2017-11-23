@@ -1,6 +1,6 @@
 package com.wheresmybrain.syp.scheduler.testtasks;
 
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.testevents.CancelEventHandler;
 import com.wheresmybrain.syp.scheduler.utils.ResourceReader;
 
@@ -32,7 +32,7 @@ public class BootstrapTest {
 
     //-- instance
 
-    private final TaskScheduler scheduler = new TaskScheduler();
+    private final SypScheduler scheduler = new SypScheduler();
 
     /*
      * Example of configuring and starting syp-scheduler

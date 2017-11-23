@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.testevents;
 
 import com.wheresmybrain.syp.scheduler.TaskEvent;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.events.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +17,10 @@ public class PauseEventHandler implements EventListener {
 
     private static Logger log = LoggerFactory.getLogger(PauseEventHandler.class);
 
-    private TaskScheduler taskScheduler;
+    private SypScheduler sypScheduler;
 
-    public PauseEventHandler(TaskScheduler taskScheduler) {
-        this.taskScheduler = taskScheduler;
+    public PauseEventHandler(SypScheduler sypScheduler) {
+        this.sypScheduler = sypScheduler;
     }
 
     /**
@@ -33,7 +33,7 @@ public class PauseEventHandler implements EventListener {
         if (event instanceof PauseEvent) {
             int taskId = event.getTaskProxy().getTaskId();
             log.debug("XX PauseEventHandler - pausing task #"+taskId);
-            this.taskScheduler.pauseTask(taskId);
+            this.sypScheduler.pauseTask(taskId);
         }
     }
 

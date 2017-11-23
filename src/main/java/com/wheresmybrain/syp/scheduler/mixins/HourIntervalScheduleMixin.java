@@ -1,13 +1,13 @@
 package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.Task;
 
 import java.util.Date;
 
 /**
- * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link SypScheduler}
  * on an hour-interval schedule.
  *
  * @author Chris McFarland

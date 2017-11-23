@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
 import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link SypScheduler}
  * on a weekly schedule on a specified dayOfWeek and time.
  * <p/>
  * This is a weekly execution task, which means it should execute once per week, so if it

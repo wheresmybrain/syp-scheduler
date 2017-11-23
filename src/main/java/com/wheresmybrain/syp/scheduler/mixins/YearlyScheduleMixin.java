@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.mixins;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
 import com.wheresmybrain.syp.scheduler.Task;
 import com.wheresmybrain.syp.scheduler.tasks.TaskErrorException;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * This mixin-style class lets any <code>Task</code> run inside the {@link TaskScheduler}
+ * This mixin-style class lets any <code>Task</code> run inside the {@link SypScheduler}
  * on a yearly schedule on the specified monthOfYear and dayOfMonth.
  * <p/>
  * This is a yearly execution task, which means it should execute once per year, so if it
@@ -36,11 +36,11 @@ public class YearlyScheduleMixin extends AbstractMixin {
      * @param task the task to execute on a schedule.
      * @param monthOfYear enum constant representing the month to execute in every year.
      * @param dayOfMonth set to execute on day 1-31 (29-31 will execute on last day of month
-     *   for months with less than those number of days), or set to constant TaskScheduler.LAST_DAY_OF_MONTH
+     *   for months with less than those number of days), or set to constant SypScheduler.LAST_DAY_OF_MONTH
      *   with (optionally) a day offset. Examples: dayOfMonth=16 (executes on 16th of every
      *   month), dayOfMonth=31 (executes on last day of every month),
-     *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH (executes on last day of every month),
-     *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
+     *   dayOfMonth=SypScheduler..LAST_DAY_OF_MONTH (executes on last day of every month),
+     *   dayOfMonth=SypScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
      * @param hourOfDay hour (0-23) to execute on the specified dayOfMonth
      * @param minuteOfHour minute (0-59) to execute in the specified hourOfDay
      * @throws IllegalArgumentException if any invalid values are passed
@@ -55,7 +55,7 @@ public class YearlyScheduleMixin extends AbstractMixin {
         super(task);
         if (monthOfYear == null) {
             throw new IllegalArgumentException("'monthOfYear' (null) must be specified");
-        } else if ((dayOfMonth < TaskScheduler.LAST_DAY_OF_MONTH-30) || (dayOfMonth > TaskScheduler.LAST_DAY_OF_MONTH && dayOfMonth < 1) || (dayOfMonth > 31)) {
+        } else if ((dayOfMonth < SypScheduler.LAST_DAY_OF_MONTH-30) || (dayOfMonth > SypScheduler.LAST_DAY_OF_MONTH && dayOfMonth < 1) || (dayOfMonth > 31)) {
             String msg = "'dayOfMonth' must be either 1-31 or set to constant LAST_DAY_OF_MONTH minus some day offset (up to 30)";
             throw new IllegalArgumentException(msg);
         } else if (hourOfDay < 0 || hourOfDay > 23 || minuteOfHour < 0 || minuteOfHour > 59) {

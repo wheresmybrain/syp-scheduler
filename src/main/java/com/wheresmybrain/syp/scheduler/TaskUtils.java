@@ -52,7 +52,7 @@ public final class TaskUtils {
      * can execute this method to transmit {@link TaskEvent events} to all the registered
      * event listeners. You can create custom events for externalizing real-time information
      * from your tasks by extending TaskEvent, and implementing {@link EventListener} and
-     * registering your listener with the TaskScheduler.
+     * registering your listener with the SypScheduler.
      * <p/>
      * Note that only tasks can call this method or a runtime exception is thrown.
      * <p/>
@@ -118,7 +118,7 @@ public final class TaskUtils {
 
     /**
      * Called by a task to add a custom event listener at runtime. Use the
-     * {@link TaskScheduler#addEventListener(EventListener)} method to add event
+     * {@link SypScheduler#addEventListener(EventListener)} method to add event
      * listeners during setup.
      */
     public static void addEventListener(EventListener eventListener) {

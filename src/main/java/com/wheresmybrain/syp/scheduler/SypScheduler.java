@@ -51,18 +51,18 @@ import java.util.concurrent.Future;
  *   Create one or more Tasks that implement {@link Task}.
  * </li>
  * <li>
- *   Use one of the constructors to get an instance of TaskScheduler.
+ *   Use one of the constructors to get an instance of SypScheduler.
  * </li>
  * <li>
  *   Optionally inject an "error emailer" (if you want to receive error notifications via
  *   email) with the following method: {@link #injectErrorReporter(ErrorReporter, String, String, String...)}.
  * </li>
  * <li>
- *   Start the TaskScheduler with its <code>start()</code> method (there's a stop() method too
+ *   Start the SypScheduler with its <code>start()</code> method (there's a stop() method too
  *   in case you need to pause or shut down the scheduler).
  * </li>
  * <li>
- *   Add the task(s) to the TaskScheduler at runtime using any of the <i>schedule..</i> methods.
+ *   Add the task(s) to the SypScheduler at runtime using any of the <i>schedule..</i> methods.
  *   You have the option of scheduling tasks either in your code, from a properly-formatted
  *   configuration file (via {@link #scheduleTasks(InputStream)}, or both.
  * </li>
@@ -82,15 +82,15 @@ import java.util.concurrent.Future;
  * to execute at the same time do not have to wait on each other.
  * </p>
  * To schedule a task to execute one time only, follow the same procedure but use one of the
- * TaskScheduler <code>scheduleOneTimeExecution()</code> methods.
+ * SypScheduler <code>scheduleOneTimeExecution()</code> methods.
  *
  * @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
-public class TaskScheduler implements EventListener {
+public class SypScheduler implements EventListener {
 
     //-- static
 
-    private static Logger log = LoggerFactory.getLogger(TaskScheduler.class);
+    private static Logger log = LoggerFactory.getLogger(SypScheduler.class);
 
     private static final String EOL = System.getProperty("line.separator");
 
@@ -120,7 +120,7 @@ public class TaskScheduler implements EventListener {
     /**
      * Creates a task scheduler instance
      */
-    public TaskScheduler() {
+    public SypScheduler() {
         this("TASK-SCHEDULER");
     }
 
@@ -129,7 +129,7 @@ public class TaskScheduler implements EventListener {
      * constructor if the application will create multiple instance of the
      * task scheduler (not recommended).
      */
-    public TaskScheduler(String name) {
+    public SypScheduler(String name) {
         this.taskProcessor = new ProcessingThread(name, this.internalQueue);
         // set the default error handler
         this.errorHandler = new TaskErrorHandler();
@@ -239,7 +239,7 @@ public class TaskScheduler implements EventListener {
 
     /**
      * Exposes the {@link SchedulerContext context} object outside
-     * the TaskScheduler. Tasks have access to this context, so data can be
+     * the SypScheduler. Tasks have access to this context, so data can be
      * stored by the tasks and accessed externally by the application that
      * uses the Scheduler.
      * <p/>
@@ -281,7 +281,7 @@ public class TaskScheduler implements EventListener {
      *   that implements Task, and the same task object can be scheduled multiple times.
      * @param delayInMillis the delay (in milliseconds) before the task executes. If the
      *   delayInMillis<=0, then the task executes immediately when it is initialized, or
-     *   when the TaskScheduler first starts, whichever comes last.
+     *   when the SypScheduler first starts, whichever comes last.
      * @return task id for the scheduled task. The task id can be used to un-schedule
      *   the task at any time.
      */
@@ -309,11 +309,11 @@ public class TaskScheduler implements EventListener {
      * @param year required param specifies the year to execute as a 4-digit number.
      * @param monthOfYear enum constant representing one of the months in the year
      * @param dayOfMonth set to execute on day 1-31 (29-31 will execute on last day of month
-     *   for months with less than those number of days), or set to constant TaskScheduler.LAST_DAY_OF_MONTH
+     *   for months with less than those number of days), or set to constant SypScheduler.LAST_DAY_OF_MONTH
      *   with (optionally) a day offset. Examples: dayOfMonth=16 (executes on 16th of every
      *   month), dayOfMonth=31 (executes on last day of every month),
-     *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH (executes on last day of every month),
-     *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
+     *   dayOfMonth=SypScheduler..LAST_DAY_OF_MONTH (executes on last day of every month),
+     *   dayOfMonth=SypScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
      * @param hourOfDay hour (0-23) to execute on the specified dayOfMonth
      * @param minuteOfHour minute (0-59) to execute on the specfied hourOfDay
      * @return task id for the scheduled task. The task id can be used to un-schedule
@@ -332,7 +332,7 @@ public class TaskScheduler implements EventListener {
             throw new IllegalArgumentException("param 'year' must be 4 digit year");
         } else if (monthOfYear == null) {
             throw new IllegalArgumentException("'monthOfYear' is null, but must be specified");
-        } else if ((dayOfMonth < TaskScheduler.LAST_DAY_OF_MONTH-30) || (dayOfMonth > TaskScheduler.LAST_DAY_OF_MONTH && dayOfMonth < 1) || (dayOfMonth > 31)) {
+        } else if ((dayOfMonth < SypScheduler.LAST_DAY_OF_MONTH-30) || (dayOfMonth > SypScheduler.LAST_DAY_OF_MONTH && dayOfMonth < 1) || (dayOfMonth > 31)) {
             String msg = "'dayOfMonth' must be either 1-31 or set to constant LAST_DAY_OF_MONTH minus some day offset (up to 30)";
             throw new IllegalArgumentException(msg);
         } else if (hourOfDay < 0 || hourOfDay > 23 || minuteOfHour < 0 || minuteOfHour > 59) {
@@ -417,7 +417,7 @@ public class TaskScheduler implements EventListener {
      * times with any interval.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
@@ -430,7 +430,7 @@ public class TaskScheduler implements EventListener {
      *   for this method. See: {@link IntervalType}.
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. (Note: the task id can be used to cancel
@@ -466,7 +466,7 @@ public class TaskScheduler implements EventListener {
 
     /**
      * Thread-safe method schedules the task to run every day at the specified time of day.
-     * If the task is unable to execute at the scheduled time, then TaskScheduler will
+     * If the task is unable to execute at the scheduled time, then SypScheduler will
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by
@@ -474,7 +474,7 @@ public class TaskScheduler implements EventListener {
      * every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
@@ -484,7 +484,7 @@ public class TaskScheduler implements EventListener {
      * @param secondOfMinute minute (0-59) to execute each minute
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
@@ -506,7 +506,7 @@ public class TaskScheduler implements EventListener {
 
     /**
      * Thread-safe method schedules the task to run every week at the specified day and time.
-     * If the task is unable to execute at the scheduled time, then TaskScheduler will
+     * If the task is unable to execute at the scheduled time, then SypScheduler will
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by implementing
@@ -514,7 +514,7 @@ public class TaskScheduler implements EventListener {
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
@@ -524,7 +524,7 @@ public class TaskScheduler implements EventListener {
      * @param minuteOfHour minute (0-59) to execute each hour
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
@@ -547,7 +547,7 @@ public class TaskScheduler implements EventListener {
 
     /**
      * Thread-safe method schedules the task to run every month at the specified day and time.
-     * If the task is unable to execute at the scheduled time, then TaskScheduler will
+     * If the task is unable to execute at the scheduled time, then SypScheduler will
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by implementing
@@ -555,7 +555,7 @@ public class TaskScheduler implements EventListener {
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
@@ -570,7 +570,7 @@ public class TaskScheduler implements EventListener {
      * @param minuteOfHour minute (0-59) to execute each hour
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
@@ -593,7 +593,7 @@ public class TaskScheduler implements EventListener {
     /**
      * Thread-safe method schedules the task to run monthly on the specified occurrence
      * of the specified day of week.
-     * If the task is unable to execute at the scheduled time, then TaskScheduler will
+     * If the task is unable to execute at the scheduled time, then SypScheduler will
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by
@@ -601,7 +601,7 @@ public class TaskScheduler implements EventListener {
      * task every day. Any Task can be scheduled multiple times with any interval.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
@@ -614,7 +614,7 @@ public class TaskScheduler implements EventListener {
      * @param minuteOfHour minute (0-59) to execute each hour
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
@@ -639,7 +639,7 @@ public class TaskScheduler implements EventListener {
 
     /**
      * Thread-safe method schedules the task to run every year at the specified day and time.
-     * If the task is unable to execute at the scheduled time, then TaskScheduler will
+     * If the task is unable to execute at the scheduled time, then SypScheduler will
      * continue to try until successful.
      * <p/>
      * To use this task the developer will need to create a <i>Task</i> class by implementing
@@ -647,23 +647,23 @@ public class TaskScheduler implements EventListener {
      * Any Task can be scheduled multiple times with any interval.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task the class that performs the work. This can be any class
      *   that implements Task, and the same task object can be scheduled multiple times.
      * @param monthOfYear enum constant representing one of the months in the year
      * @param dayOfMonth set to execute on day 1-31 (29-31 will execute on last day of month
-     *   for months with less than those number of days), or set to constant TaskScheduler.LAST_DAY_OF_MONTH
+     *   for months with less than those number of days), or set to constant SypScheduler.LAST_DAY_OF_MONTH
      *   with (optionally) a day offset. Examples: dayOfMonth=16 (executes on 16th of every
      *   month), dayOfMonth=31 (executes on last day of every month),
-     *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH (executes on last day of every month),
-     *   dayOfMonth=TaskScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
+     *   dayOfMonth=SypScheduler..LAST_DAY_OF_MONTH (executes on last day of every month),
+     *   dayOfMonth=SypScheduler..LAST_DAY_OF_MONTH-1 (executes on next-to-last day of month).
      * @param hourOfDay hour (0-23) to execute on the specified dayOfMonth
      * @param minuteOfHour minute (0-59) to execute on the specfied hour
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to un-schedule
@@ -696,13 +696,13 @@ public class TaskScheduler implements EventListener {
      * using the other <code>schedule...</code> methods in this class.
      * <p/>
      * Email address(es) to notify if the task fails can be associated with this task by
-     * calling the TaskScheduler {@link #setTaskSpecificAddresses(int, String...) method with
+     * calling the SypScheduler {@link #setTaskSpecificAddresses(int, String...) method with
      * the taskId returned from this method.
      *
      * @param task any ScheduledTask subclass.
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead (if
      *   an internal scheduling was coded).
@@ -735,7 +735,7 @@ public class TaskScheduler implements EventListener {
      * only needs to schedule tasks defined in the xml config file, then the
      * public <code>scheduleTasks(InputStream)</code> method is the one to use.
      *
-     * @param schedulerConfig SchedulerConfig object created by the TaskScheduler
+     * @param schedulerConfig SchedulerConfig object created by the SypScheduler
      * @return array of task ids for the scheduled tasks
      * @throws SchedulerConfigException if there's an error creating tasks
      * @see SchedulerConfig
@@ -890,7 +890,7 @@ public class TaskScheduler implements EventListener {
                 int day = taskConfig.getDayOfMonthInt();
                 int hour = taskConfig.getHours();
                 int minute = taskConfig.getMinutes();
-                if (day > 0 || day <= TaskScheduler.LAST_DAY_OF_MONTH) {
+                if (day > 0 || day <= SypScheduler.LAST_DAY_OF_MONTH) {
                     // using 1st Monthly scheduler technique - dayOfMonth
                     taskId = this.scheduleMonthlyExecution(task, day, hour, minute, delay);
                 } else {
@@ -931,7 +931,7 @@ public class TaskScheduler implements EventListener {
      * @param task any ScheduledTask subclass.
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead.
      * @return task id for the scheduled task. The task id can be used to reference the
@@ -947,7 +947,7 @@ public class TaskScheduler implements EventListener {
         }
         // scheduled tasks are put on the map until they finish executing
         this.taskMap.put(new Integer(taskId), task);
-        // call getter method in case it was overridden by TaskScheduler subclass
+        // call getter method in case it was overridden by SypScheduler subclass
         SchedulerContext context = this.getSchedulerContext();
         // prepare the task and add it to the execution queue
         task.prepare(this, context, initialDelayInMillis);
@@ -1096,10 +1096,10 @@ public class TaskScheduler implements EventListener {
     }
 
     /**
-     * Starts this TaskScheduler and returns a
+     * Starts this SypScheduler and returns a
      * reference to itself for chaining.
      */
-    public TaskScheduler start() {
+    public SypScheduler start() {
         // add the error handler
         // (delayed because custom handler can be added during setup)
         TaskUtils.addEventListener(this.errorHandler);
@@ -1110,7 +1110,7 @@ public class TaskScheduler implements EventListener {
     }
 
     /**
-     * Stops this TaskScheduler. Note that all executing and scheduled tasks
+     * Stops this SypScheduler. Note that all executing and scheduled tasks
      * will be cancelled when this method is called.
      */
     public void stop() {

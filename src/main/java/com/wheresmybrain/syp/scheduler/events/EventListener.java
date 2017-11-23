@@ -2,7 +2,7 @@ package com.wheresmybrain.syp.scheduler.events;
 
 import com.wheresmybrain.syp.scheduler.SchedulerContext;
 import com.wheresmybrain.syp.scheduler.TaskEvent;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.TaskUtils;
 
 /**
@@ -24,7 +24,7 @@ import com.wheresmybrain.syp.scheduler.TaskUtils;
  *   {@link TaskUtils#fireEvent(TaskEvent)} method from your task
  *   to "fire" the event to the listener(s)</li>
  * <li>Code your application to register your custom event listener using
- *   the {@link TaskScheduler#addEventListener(EventListener)} method</li>
+ *   the {@link SypScheduler#addEventListener(EventListener)} method</li>
  *
  * @see TaskEvent
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>

@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.events.errorhandler;
 
 import com.wheresmybrain.syp.scheduler.TaskEvent;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.TaskUtils;
 import com.wheresmybrain.syp.scheduler.events.EventListener;
 import com.wheresmybrain.syp.scheduler.utils.JavaUtils;
@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * This error handler logs task errors as warning messages. It will also
  * send email error notifications if you injected an "error emailer" using the
- * {@link TaskScheduler#injectErrorReporter(ErrorReporter, String, String, String...)} method.
+ * {@link SypScheduler#injectErrorReporter(ErrorReporter, String, String, String...)} method.
  * <p/>
  * If you need additional behavior when tasks fail, then create a custom event listener,
  * as described in the {@link EventListener} javadoc, and implement it to listen
@@ -111,7 +111,7 @@ public class TaskErrorHandler implements EventListener {
     }
 
     /**
-     * This method is can be called by the parent TaskScheduler if the error
+     * This method is can be called by the parent SypScheduler if the error
      * emailer is injected at that level, which is the only way to set the
      * error emailer into the default TaskErrorHandler.
      * Sets a class that can be used to send error notifications via email. If

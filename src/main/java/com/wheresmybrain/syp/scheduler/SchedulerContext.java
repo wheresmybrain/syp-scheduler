@@ -4,14 +4,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Stores data shared between different tasks running under the TaskScheduler.
- * The SchedulerContext object exists inside the TaskScheduler instance, and the SchedulerContext
+ * Stores data shared between different tasks running under the SypScheduler.
+ * The SchedulerContext object exists inside the SypScheduler instance, and the SchedulerContext
  * reference is passed into every task execution through its <code>executeTask(SchedulerContext)</code>
  * method. The SchedulerContext is a way to share data between different tasks, and with
- * a parent application (via the TaskScheduler <code>getSchedulerContext()</code> method).
+ * a parent application (via the SypScheduler <code>getSchedulerContext()</code> method).
  * <p/>
  * A custom context class can be created by extending this class and setting its classname
- * on TaskScheduler using the {@link TaskScheduler#setSchedulerContext(SchedulerContext)} method
+ * on SypScheduler using the {@link SypScheduler#setSchedulerContext(SchedulerContext)} method
  * before starting the Scheduler.
  *
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>

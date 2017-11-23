@@ -7,7 +7,7 @@ import com.wheresmybrain.syp.scheduler.events.EventListener;
  * work. The scheduling part is separate, so the Task developer only needs to think about
  * implementing this interface and writing the business logic that gets executed every time
  * the Task is run. The same task can be scheduled to execute in many different ways. See
- * the {@link TaskScheduler} for how to schedule your task.
+ * the {@link SypScheduler} for how to schedule your task.
  * <p/>
  * If a task is scheduled to execute more than one time, it is important to know that all
  * subsequent executions of the same scheduled task are performed by the same task object,

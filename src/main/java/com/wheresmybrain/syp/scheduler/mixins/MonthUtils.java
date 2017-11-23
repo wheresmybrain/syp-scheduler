@@ -1,6 +1,6 @@
 package com.wheresmybrain.syp.scheduler.mixins;
 
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.utils.TimeUtils;
 
 import java.util.Calendar;
@@ -26,7 +26,7 @@ public class MonthUtils {
 
     /**
      * The 'dayOfMonth' parameter for some <i>Mixins</i> can be entered as
-     * either a numeric date, or a date relative to {@link TaskScheduler#LAST_DAY_OF_MONTH}.
+     * either a numeric date, or a date relative to {@link SypScheduler#LAST_DAY_OF_MONTH}.
      * This method returns the actual numeric date corresponding to whichever 'dayOfMonth'
      * technique is used.
      *
@@ -47,12 +47,12 @@ public class MonthUtils {
                 int lastDateOfMonth = MonthUtils.getLastDateOfMonth(date);
                 dateToSet = (specifiedDayOfMonth <= lastDateOfMonth) ? specifiedDayOfMonth : lastDateOfMonth;
             }
-        } else if (specifiedDayOfMonth == TaskScheduler.LAST_DAY_OF_MONTH) {
+        } else if (specifiedDayOfMonth == SypScheduler.LAST_DAY_OF_MONTH) {
             dateToSet = MonthUtils.getLastDateOfMonth(date);
         } else {
             // day of month is offset from last day of month
             int lastDateOfMonth = MonthUtils.getLastDateOfMonth(date);
-            int offset = TaskScheduler.LAST_DAY_OF_MONTH - specifiedDayOfMonth;
+            int offset = SypScheduler.LAST_DAY_OF_MONTH - specifiedDayOfMonth;
             dateToSet = lastDateOfMonth - offset;
             if (dateToSet < 1) dateToSet = 1;
         }

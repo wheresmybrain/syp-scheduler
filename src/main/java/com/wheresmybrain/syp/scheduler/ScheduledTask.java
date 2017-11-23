@@ -15,13 +15,13 @@ import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Abstract base class for tasks executed by the {@link TaskScheduler}. The actual
+ * Abstract base class for tasks executed by the {@link SypScheduler}. The actual
  * work that a task executes is implemented by the {@link #executeTask(SchedulerContext)} method.
  * <p/>
  * This class can be used to create a <i>custom task</i> that executes one time (see next paragraph).
  * However, this class is not meant to be extended by the developer to create a schedule-able task. It
  * is much easier to create a task by implementing {@link Task}, and then schedule the task using one
- * of the {@link TaskScheduler} <code>schedule</code> methods (see TaskScheduler api.
+ * of the {@link SypScheduler} <code>schedule</code> methods (see SypScheduler api.
  * <p/>
  * This class can be extended to create a one-time execution Task by following two steps:
  * <ol>
@@ -38,9 +38,9 @@ import java.util.concurrent.TimeUnit;
  * extend the {@link RecurringTask} class and follow the same two steps. All executions of a scheduled
  * task are performed by the same task instance, so you can code your task as a stateful object that
  * can share its state information across all executions. As already mentioned though, it's easier to
- * create tasks by implementing <code>Task</code> and scheduling the task through <code>TaskScheduler</code>.
+ * create tasks by implementing <code>Task</code> and scheduling the task through <code>SypScheduler</code>.
  *
- * @see TaskScheduler
+ * @see SypScheduler
  * @author @author <a href="mailto:chris.mcfarland@gmail.com">Chris McFarland</a>
  */
 public abstract class ScheduledTask implements Runnable, Delayed {
@@ -49,7 +49,7 @@ public abstract class ScheduledTask implements Runnable, Delayed {
 
     // holds an internal reference to scheduler so tasks
     // can schedule subsequent executions
-    private TaskScheduler scheduler;
+    private SypScheduler scheduler;
 
     // context object stores data to share with other tasks
     // or different executions of the same task
@@ -94,7 +94,7 @@ public abstract class ScheduledTask implements Runnable, Delayed {
      * or null), but implementing it can make troubleshooting significantly easier
      * when an error occurs.
      * <p/>
-     * This method is executed by the TaskScheduler when a task fails and is
+     * This method is executed by the SypScheduler when a task fails and is
      * used by the internal error handler to report information about the failure.
      */
     public abstract String[] getDebugState();
@@ -102,20 +102,20 @@ public abstract class ScheduledTask implements Runnable, Delayed {
     /**
      * Executed by the framework to prepare the task for a new execution.
      *
-     * @param scheduler sets an internal reference to the TaskScheduler so
+     * @param scheduler sets an internal reference to the SypScheduler so
      *   the task can reschedule itself.
      * @param schedulerContext allows task to store data shared with other tasks or different
      *   executions of the same task.
      * @param initialDelayInMillis the delay (in milliseconds) before the very first
      *   execution. If the initialDelayInMillis=0, then the task executes immediately
-     *   when it is initialized, or when the TaskScheduler first starts, whichever
+     *   when it is initialized, or when the SypScheduler first starts, whichever
      *   comes last. If initialDelayInMillis is < 0, then the initial delay is
      *   ignored and the task's internal scheduling interval is used instead - so
      *   an hourly task set to execute once per hour would execute one hour after
      *   this method is called, and a task set to execute the first day of every month
      *   will wait until next month to execute.
      */
-    void prepare(TaskScheduler scheduler, SchedulerContext schedulerContext, long initialDelayInMillis) {
+    void prepare(SypScheduler scheduler, SchedulerContext schedulerContext, long initialDelayInMillis) {
         this.scheduler = scheduler;
         this.schedulerContext = schedulerContext;
         // schedule next execution
@@ -181,7 +181,7 @@ public abstract class ScheduledTask implements Runnable, Delayed {
     }
 
     /**
-     * This method is called by the TaskScheduler when it's time to execute a task.
+     * This method is called by the SypScheduler when it's time to execute a task.
      * All non-Error Exceptions (except InterruptedException) are caught and processed
      * so the Thread doesn't die.
      *
@@ -233,10 +233,10 @@ public abstract class ScheduledTask implements Runnable, Delayed {
     }
 
     /**
-     * Returns a reference to the parent TaskScheduler in case a task needs to
+     * Returns a reference to the parent SypScheduler in case a task needs to
      * reschedule itself (recurring tasks do this).
      */
-    protected final TaskScheduler getScheduler() {
+    protected final SypScheduler getScheduler() {
         return scheduler;
     }
 
@@ -258,7 +258,7 @@ public abstract class ScheduledTask implements Runnable, Delayed {
     }
 
     /**
-     * Executed by the TaskScheduler to assign a
+     * Executed by the SypScheduler to assign a
      * task id to this task.
      */
     void setTaskId(final int taskId) {

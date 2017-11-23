@@ -1,7 +1,7 @@
 package com.wheresmybrain.syp.scheduler.config;
 
 import com.wheresmybrain.syp.scheduler.ScheduledTask;
-import com.wheresmybrain.syp.scheduler.TaskScheduler;
+import com.wheresmybrain.syp.scheduler.SypScheduler;
 import com.wheresmybrain.syp.scheduler.enums.DayOccurrence;
 import com.wheresmybrain.syp.scheduler.enums.DayOfWeek;
 import com.wheresmybrain.syp.scheduler.enums.MonthOfYear;
@@ -114,7 +114,7 @@ public class TaskConfig {
 
     /**
      * <li>dayOfMonth = 1-31 (if specified dayOfMonth > monthOfYear's last day, then monthOfYear's last day is used)</li>
-     * <li>TaskScheduler.LAST_DAY_OF_MONTH (can specify: "LAST_DAY_OF_MONTH - n" for dates relative to last day)
+     * <li>SypScheduler.LAST_DAY_OF_MONTH (can specify: "LAST_DAY_OF_MONTH - n" for dates relative to last day)
      */
     public String getDayOfMonth() {
         return dayOfMonth;
@@ -122,7 +122,7 @@ public class TaskConfig {
 
     /**
      * <li>dayOfMonth = 1-31 (if specified dayOfMonth > monthOfYear's last day, then monthOfYear's last day is used)</li>
-     * <li>TaskScheduler.LAST_DAY_OF_MONTH (can specify: "LAST_DAY_OF_MONTH - n" for dates relative to last day)
+     * <li>SypScheduler.LAST_DAY_OF_MONTH (can specify: "LAST_DAY_OF_MONTH - n" for dates relative to last day)
      */
     public int getDayOfMonthInt() {
         return dayOfMonthInt;
@@ -130,7 +130,7 @@ public class TaskConfig {
 
     /**
      * <li>dayOfMonth = 1-31 (if specified dayOfMonth > monthOfYear's last day, then monthOfYear's last day is used)</li>
-     * <li>TaskScheduler.LAST_DAY_OF_MONTH (can specify: "LAST_DAY_OF_MONTH - n" for dates relative to last day)
+     * <li>SypScheduler.LAST_DAY_OF_MONTH (can specify: "LAST_DAY_OF_MONTH - n" for dates relative to last day)
      */
     public void setDayOfMonth(String dayOfMonthString) {
         this.dayOfMonth = dayOfMonthString;
@@ -140,9 +140,9 @@ public class TaskConfig {
             if (dayOfMonthString.length() > 17) {
                 String remainder = dayOfMonthString.substring(17, dayOfMonthString.length());
                 int adjustment = this.extractEndOfMonthAdjustment(remainder);
-                this.dayOfMonthInt = TaskScheduler.LAST_DAY_OF_MONTH - adjustment;
+                this.dayOfMonthInt = SypScheduler.LAST_DAY_OF_MONTH - adjustment;
             } else {
-                this.dayOfMonthInt = TaskScheduler.LAST_DAY_OF_MONTH;
+                this.dayOfMonthInt = SypScheduler.LAST_DAY_OF_MONTH;
             }
         } else {
             try {

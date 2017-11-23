@@ -32,7 +32,7 @@ import java.util.Date;
  * </li>
  * <li>
  * Handle the event - Handling the event involves 2 steps: (a) create the "listener" class, and
- * (b) add the listener to the <i>TaskScheduler</i>. To create the listener class, just create a
+ * (b) add the listener to the <i>SypScheduler</i>. To create the listener class, just create a
  * new class that implements {@link EventListener} and implement the <code>handleEvent()</code> method to
  * get the information to pass in your event and use it as needed. <b>Make sure you only handle *your*
  * event because every event fired by every scheduledTask comes through this method!</b>. You can
@@ -46,8 +46,8 @@ import java.util.Date;
  *         }
  *     }
  * </pre>
- * Once you create your listener, you can add it to TaskScheduler with the following method:
- * {@link TaskScheduler#addEventListener(EventListener)}
+ * Once you create your listener, you can add it to SypScheduler with the following method:
+ * {@link SypScheduler#addEventListener(EventListener)}
  * </li>
  * </ol>
  *

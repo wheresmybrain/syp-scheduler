@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  * This is an example of a custom recurring task -
- * Logs the tasks (executing and scheduled) inside the TaskScheduler
+ * Logs the tasks (executing and scheduled) inside the SypScheduler
  * once per minute.
  *
  * @author Chris McFarland
